@@ -404,8 +404,8 @@
         <button id="draw-meal" class="large">翻牌子</button>
     </div>
 
-<!--    <div class="add-button-container">-->
-<!--    </div>-->
+    <!--    <div class="add-button-container">-->
+    <!--    </div>-->
 
     <div class="plan-selector">
         <!--            <label for="plan-select">当前方案:</label>-->
@@ -414,7 +414,7 @@
     </div>
 
     <div class="plans-container">
-<!--        <h2>膳方详情</h2>-->
+        <!--        <h2>膳方详情</h2>-->
         <div id="plan-details">
             <!-- 方案详情将由JS动态生成 -->
             <div class="empty-state">请选择或创建膳方</div>
@@ -449,7 +449,8 @@
 <div id="note-modal" class="modal">
     <div class="modal-content">
         <h2>传口谕</h2>
-        <textarea id="note-input" rows="4" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
+        <textarea id="note-input" rows="4"
+                  style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         <div class="modal-buttons">
             <button id="save-note">宣下去</button>
             <button id="cancel-note" class="secondary">不必了</button>
@@ -473,7 +474,8 @@
 <div id="import-export-modal" class="modal">
     <div class="modal-content">
         <h2 id="ie-title">导入御方</h2>
-        <textarea id="ie-textarea" rows="10" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
+        <textarea id="ie-textarea" rows="10"
+                  style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         <div class="modal-buttons">
             <button id="ie-action">确认3</button>
             <button id="ie-cancel" class="secondary">取消3</button>
@@ -536,7 +538,7 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "馒头", weight: 100 }
+                        {id: generateId(), name: "馒头", weight: 100}
                     ]
                 },
                 {
@@ -545,7 +547,7 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "小鸡炖蘑菇", weight: 100 }
+                        {id: generateId(), name: "小鸡炖蘑菇", weight: 100}
                     ]
                 },
                 {
@@ -554,8 +556,8 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "橘子", weight: 100 },
-                        { id: generateId(), name: "爆米花", weight: 100 }
+                        {id: generateId(), name: "橘子", weight: 100},
+                        {id: generateId(), name: "爆米花", weight: 100}
                     ]
                 },
                 {
@@ -564,7 +566,7 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "小米粥", weight: 100 }
+                        {id: generateId(), name: "小米粥", weight: 100}
                     ]
                 }
             ]
@@ -661,10 +663,10 @@
                                 可复
                             </label>
                             <div class="count-control">
-                                <button onclick="updateCategoryCount('${plan.id}', '${category.id}', ${category.count - 1})">-</button>
+                                <button onclick="adjustCategoryCount('${plan.id}', '${category.id}', -1)">-</button>
                                 <input type="number" min="0" max="10000" value="${category.count}"
                                     onchange="updateCategoryCount('${plan.id}', '${category.id}', this.value)">
-                                <button onclick="updateCategoryCount('${plan.id}', '${category.id}', ${category.count + 1})">+</button>
+                                <button onclick="adjustCategoryCount('${plan.id}', '${category.id}', 1)">+</button>
                                 <span class="count-label">份</span>
                             </div>
                             <div>
@@ -702,10 +704,10 @@
                             <div class="item-controls">
                                 <div class="weight-control">
                                     <span class="weight-label">权重:</span>
-                                    <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', -10)">-</button>
+                                    <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', -1)">-</button>
                                     <input type="number" min="0" max="10000" value="${item.weight}"
                                         onchange="updateItemWeight('${planId}', '${category.id}', '${item.id}', this.value)">
-                                    <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', 10)">+</button>
+                                    <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', 1)">+</button>
                                 </div>
                                 <div>
                                     <button onclick="moveItemToCategory('${planId}', '${category.id}', '${item.id}')">移动</button>
@@ -906,7 +908,7 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "馒头", weight: 100 }
+                        {id: generateId(), name: "馒头", weight: 100}
                     ]
                 },
                 {
@@ -915,7 +917,7 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "小鸡炖蘑菇", weight: 100 }
+                        {id: generateId(), name: "小鸡炖蘑菇", weight: 100}
                     ]
                 },
                 {
@@ -924,8 +926,8 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "橘子", weight: 100 },
-                        { id: generateId(), name: "爆米花", weight: 100 }
+                        {id: generateId(), name: "橘子", weight: 100},
+                        {id: generateId(), name: "爆米花", weight: 100}
                     ]
                 },
                 {
@@ -934,7 +936,7 @@
                     count: 1,
                     allowRepeat: false,
                     items: [
-                        { id: generateId(), name: "小米粥", weight: 100 }
+                        {id: generateId(), name: "小米粥", weight: 100}
                     ]
                 }
             ]
@@ -947,6 +949,7 @@
         saveState();
         saveStateToStack(planId);
         render();
+        changeCurrentPlan(planId);
     }
 
     // 重命名方案
@@ -997,6 +1000,7 @@
 
             saveState();
             render();
+            changeCurrentPlan(newPlanId);
         }
     }
 
@@ -1015,7 +1019,7 @@
 
             // 如果删除的是当前方案，设置第一个方案为当前
             if (state.currentPlanId === planId) {
-                state.currentPlanId = state.plans.length > 0 ? state.plans[0].id : null;
+                state.currentPlanId = state.plans.length > 0 ? state.plans[index === 0 ? 0 : index - 1].id : null;
             }
 
             // 清除相关的撤销重做栈
@@ -1024,6 +1028,19 @@
 
             saveState();
             render();
+        }
+    }
+
+    // 本想通过触发下拉框change事件切换方案
+    function changeCurrentPlan(planId) {
+        const planSelect = document.getElementById('plan-select');
+        const options = planSelect.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === planId) {
+                planSelect.selectedIndex = i;
+                setCurrentPlan(planId); // 触发不动，手动调用
+                break;
+            }
         }
     }
 
@@ -1044,7 +1061,7 @@
                 count: 1,
                 allowRepeat: false,
                 items: [
-                    { id: generateId(), name: "新膳品", weight: 100 }
+                    {id: generateId(), name: "新膳品", weight: 100}
                 ]
             };
 
@@ -1085,7 +1102,7 @@
     function updateCategoryCount(planId, categoryId, count) {
         count = parseInt(count);
         if (isNaN(count) || count < 0 || count > 10000) {
-            alert('数量必须在0-10000之间');
+            alert('份数必须在0-10000之间');
             renderPlanDetails();
             return;
         }
@@ -1097,6 +1114,23 @@
                 category.count = count;
                 saveState();
                 saveStateToStack(planId);
+            }
+        }
+    }
+
+    // 调整类部数量
+    function adjustCategoryCount(planId, categoryId, delta) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                let count = category.count + delta;
+                if (count < 0) count = 0;
+                if (count > 10000) count = 10000;
+                category.count = count;
+                saveState();
+                saveStateToStack(planId);
+                renderPlanDetails();
             }
         }
     }
@@ -1353,7 +1387,7 @@
             // 检查不可重复时选择数量是否超过食品种类
             if (!category.allowRepeat && category.count > category.items.length) {
                 isValid = false;
-                errorMessage = `陛下，类部"${category.name}"不可重复，但选择份数(${category.count})已经超过膳品数(${category.items.length})`;
+                errorMessage = `陛下，类部"${category.name}"中的膳品不够了，膳品数(${category.items.length})比您要的不重复份数(${category.count})少`;
                 break;
             }
 
