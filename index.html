@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>JS 示例</title>
+</head>
+<body>
+<h1>欢迎来到我的站点</h1>
+
+<input type="text" id="nameInput" placeholder="请输入你的名字">
+<button onclick="greetAndRemember()">提交</button>
+
+<p id="greeting"></p>
+
+<script>
+    // 页面加载时检查是否有保存的名字
+    window.onload = function () {
+        const username = getCookie('username');
+        if (username) {
+            document.getElementById('greeting').textContent = `再次欢迎你，${username}！`;
+        }
+    };
+
+    function greetAndRemember() {
+        // 1. 获取用户输入
+        const name = document.getElementById('nameInput').value;
+
+        // 2. 改变网页内容 (操作DOM)
+        const greetingElement = document.getElementById('greeting');
+        if (name) {
+            greetingElement.textContent = `你好，${name}！`;
+        } else {
+            greetingElement.textContent = '请输入一个名字吧~';
+        }
+
+        // 3. 将名字存入Cookie，有效期7天
+        setCookie('username', name, 7);
+    }
+
+    // 设置Cookie的函数
+    function setCookie(name, value, days) {
+        const d = new Date();
+        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    }
+
+    // 获取Cookie的函数
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+</script>
+</body>
+</html>
