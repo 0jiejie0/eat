@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>御膳翻牌器 - 皇家用膳选择</title>
+    <title>御膳翻牌器 - 皇家之选</title>
     <style>
         :root {
             --gold-primary: #d4af37;
@@ -256,7 +256,7 @@
         }
 
         button.large {
-            padding: 12px 24px;
+            padding: 16px 48px;
             font-size: 1.2rem;
         }
 
@@ -390,43 +390,45 @@
 <body>
 <header>
     <h1>御膳翻牌器</h1>
-    <p>皇家用膳选择，解决每日膳食烦恼</p>
+    <p>皇家用膳，不怕困难</p>
 </header>
 
 <div class="container">
     <div class="controls-row">
-        <button id="import-btn">导入配置</button>
-        <div class="plan-selector">
-            <label for="plan-select">当前方案:</label>
-            <select id="plan-select"></select>
-        </div>
-        <button id="export-btn">导出配置</button>
-    </div>
-
-    <div class="add-button-container">
-        <button id="add-plan">新增用膳方案</button>
+        <button id="import-btn">换新御方</button>
+        <button id="add-plan">新增膳方</button>
+        <button id="export-btn">誊出御方</button>
     </div>
 
     <div class="draw-button-container">
-        <button id="draw-meal" class="large">翻牌用膳</button>
+        <button id="draw-meal" class="large">翻牌子</button>
+    </div>
+
+<!--    <div class="add-button-container">-->
+<!--    </div>-->
+
+    <div class="plan-selector">
+        <!--            <label for="plan-select">当前方案:</label>-->
+        <label for="plan-select">看朕心情择膳：</label>
+        <select id="plan-select"></select>
     </div>
 
     <div class="plans-container">
-        <h2>用膳方案详情</h2>
+<!--        <h2>膳方详情</h2>-->
         <div id="plan-details">
             <!-- 方案详情将由JS动态生成 -->
-            <div class="empty-state">请选择或创建用膳方案</div>
+            <div class="empty-state">请选择或创建膳方</div>
         </div>
     </div>
 
     <div class="history-container">
-        <h2>近期用膳记录</h2>
+        <h2>近期膳注</h2>
         <div id="history-list">
             <!-- 历史记录将由JS动态生成 -->
             <div class="empty-state">暂无用膳记录</div>
         </div>
         <div class="add-button-container">
-            <button id="clear-history" class="secondary">清除历史</button>
+            <button id="clear-history" class="secondary">来人，给朕烧了</button>
         </div>
     </div>
 </div>
@@ -437,8 +439,8 @@
         <h2>今日御膳</h2>
         <div id="result-content"></div>
         <div class="modal-buttons">
-            <button id="confirm-result">确认</button>
-            <button id="cancel-result" class="secondary">取消</button>
+            <button id="confirm-result">吩咐下去</button>
+            <button id="cancel-result" class="secondary">朕不喜欢</button>
         </div>
     </div>
 </div>
@@ -446,11 +448,11 @@
 <!-- 备注模态框 -->
 <div id="note-modal" class="modal">
     <div class="modal-content">
-        <h2>添加备注</h2>
+        <h2>传口谕</h2>
         <textarea id="note-input" rows="4" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         <div class="modal-buttons">
-            <button id="save-note">保存</button>
-            <button id="cancel-note" class="secondary">跳过</button>
+            <button id="save-note">宣下去</button>
+            <button id="cancel-note" class="secondary">不必了</button>
         </div>
     </div>
 </div>
@@ -458,11 +460,11 @@
 <!-- 确认删除模态框 -->
 <div id="confirm-modal" class="modal">
     <div class="modal-content">
-        <h2>确认操作</h2>
-        <p id="confirm-message">您确定要执行此操作吗？</p>
+        <h2>陛下三思</h2>
+        <p id="confirm-message">罪臣万请陛下三思啊！</p>
         <div class="modal-buttons">
-            <button id="confirm-yes">确定</button>
-            <button id="confirm-no" class="secondary">取消</button>
+            <button id="confirm-yes">再拦斩了你</button>
+            <button id="confirm-no" class="secondary">爱卿说得是，算了</button>
         </div>
     </div>
 </div>
@@ -470,11 +472,11 @@
 <!-- 导入导出模态框 -->
 <div id="import-export-modal" class="modal">
     <div class="modal-content">
-        <h2 id="ie-title">导入配置</h2>
+        <h2 id="ie-title">导入御方</h2>
         <textarea id="ie-textarea" rows="10" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         <div class="modal-buttons">
-            <button id="ie-action">确认</button>
-            <button id="ie-cancel" class="secondary">取消</button>
+            <button id="ie-action">确认3</button>
+            <button id="ie-cancel" class="secondary">取消3</button>
         </div>
     </div>
 </div>
@@ -607,7 +609,7 @@
         const planDetails = document.getElementById('plan-details');
 
         if (!state.currentPlanId || state.plans.length === 0) {
-            planDetails.innerHTML = '<div class="empty-state">请选择或创建用膳方案</div>';
+            planDetails.innerHTML = '<div class="empty-state">请选择或创建膳方</div>';
             return;
         }
 
@@ -622,28 +624,28 @@
                                 onchange="renamePlan('${plan.id}', this.value)" style="min-width: 200px;">
                         </h3>
                         <div>
-                            <button onclick="copyPlan('${plan.id}')">复制</button>
-                            <button onclick="requestDeletePlan('${plan.id}')" class="danger">删除</button>
+                            <button onclick="copyPlan('${plan.id}')">再誊份本膳方</button>
+                            <button onclick="requestDeletePlan('${plan.id}')" class="danger">烧了</button>
                             ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ?
-            `<button onclick="undo('${plan.id}')">撤销</button>` : ''}
+            `<button onclick="undo('${plan.id}')">改回来</button>` : ''}
                             ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ?
-            `<button onclick="redo('${plan.id}')">重做</button>` : ''}
+            `<button onclick="redo('${plan.id}')">改过去</button>` : ''}
                         </div>
                     </div>
                     <div id="categories-${plan.id}">
                         ${renderCategories(plan)}
                     </div>
                     <div class="add-button-container">
-                        <button onclick="addCategory('${plan.id}')">新增类目</button>
+                        <button onclick="addCategory('${plan.id}')">新增类部</button>
                     </div>
                 </div>
             `;
     }
 
-    // 渲染类目
+    // 渲染类部
     function renderCategories(plan) {
         if (!plan.categories || plan.categories.length === 0) {
-            return '<div class="empty-state">此类目为空，点击"新增类目"添加</div>';
+            return '<div class="empty-state">此类部为空，点击"新增类部"添加</div>';
         }
 
         let html = '';
@@ -653,29 +655,29 @@
                         <div class="category-header">
                             <input type="text" class="category-name" value="${category.name}"
                                 onchange="renameCategory('${plan.id}', '${category.id}', this.value)">
+                            <label>
+                                <input type="checkbox" ${category.allowRepeat ? 'checked' : ''}
+                                    onchange="toggleCategoryRepeat('${plan.id}', '${category.id}', this.checked)">
+                                可复
+                            </label>
                             <div class="count-control">
-                                <span class="count-label">数量:</span>
                                 <button onclick="updateCategoryCount('${plan.id}', '${category.id}', ${category.count - 1})">-</button>
                                 <input type="number" min="0" max="10000" value="${category.count}"
                                     onchange="updateCategoryCount('${plan.id}', '${category.id}', this.value)">
                                 <button onclick="updateCategoryCount('${plan.id}', '${category.id}', ${category.count + 1})">+</button>
+                                <span class="count-label">份</span>
                             </div>
-                            <label>
-                                <input type="checkbox" ${category.allowRepeat ? 'checked' : ''}
-                                    onchange="toggleCategoryRepeat('${plan.id}', '${category.id}', this.checked)">
-                                可重复
-                            </label>
                             <div>
                                 <button onclick="moveCategoryToPlan('${plan.id}', '${category.id}')">移动</button>
                                 <button onclick="copyCategoryToPlan('${plan.id}', '${category.id}')">复制</button>
-                                <button onclick="requestDeleteCategory('${plan.id}', '${category.id}')" class="danger">删除</button>
+                                <button onclick="requestDeleteCategory('${plan.id}', '${category.id}')" class="danger">勾去</button>
                             </div>
                         </div>
                         <div id="items-${category.id}">
                             ${renderItems(plan.id, category)}
                         </div>
                         <div class="add-button-container">
-                            <button onclick="addItem('${plan.id}', '${category.id}')">添加食品</button>
+                            <button onclick="addItem('${plan.id}', '${category.id}')">添加膳品</button>
                         </div>
                     </div>
                 `;
@@ -687,7 +689,7 @@
     // 渲染食品项
     function renderItems(planId, category) {
         if (!category.items || category.items.length === 0) {
-            return '<div class="empty-state">此类目暂无食品，点击"添加食品"</div>';
+            return '<div class="empty-state">此类部暂无膳品，点击"添加膳品"</div>';
         }
 
         let html = '';
@@ -707,7 +709,7 @@
                                 </div>
                                 <div>
                                     <button onclick="moveItemToCategory('${planId}', '${category.id}', '${item.id}')">移动</button>
-                                    <button onclick="requestDeleteItem('${planId}', '${category.id}', '${item.id}')" class="danger">删除</button>
+                                    <button onclick="requestDeleteItem('${planId}', '${category.id}', '${item.id}')" class="danger">勾去</button>
                                 </div>
                             </div>
                         </div>
@@ -742,9 +744,9 @@
 
             historyElement.innerHTML = `
                     <div><strong>${new Date(record.time).toLocaleString()}</strong></div>
-                    <div>方案: ${record.planName}</div>
+                    <div>膳方: ${record.planName}</div>
                     ${resultsHtml}
-                    ${record.note ? `<div><strong>备注:</strong> ${record.note}</div>` : ''}
+                    ${record.note ? `<div><strong>口谕:</strong> ${record.note}</div>` : ''}
                 `;
 
             historyList.appendChild(historyElement);
@@ -772,13 +774,13 @@
 
         // 导入按钮
         document.getElementById('import-btn').addEventListener('click', () => {
-            showImportExportModal('导入配置', '导入', importData);
+            showImportExportModal('导入御方', '导入', importData);
         });
 
         // 导出按钮
         document.getElementById('export-btn').addEventListener('click', () => {
             const data = prepareExportData();
-            showImportExportModal('导出配置', '复制', exportData, JSON.stringify(data, null, 2));
+            showImportExportModal('导出御方', '复制', exportData, JSON.stringify(data, null, 2));
         });
 
         // 清除历史按钮
@@ -950,14 +952,14 @@
     // 重命名方案
     function renamePlan(planId, newName) {
         if (!newName.trim()) {
-            alert('方案名称不能为空');
+            alert('请陛下为膳方赐名');
             render();
             return;
         }
 
         // 检查名称是否已存在
         if (state.plans.some(p => p.id !== planId && p.name === newName)) {
-            alert('方案名称已存在');
+            alert('陛下神机妙算，这道膳方已经有了');
             render();
             return;
         }
@@ -1000,7 +1002,7 @@
 
     // 请求删除方案
     function requestDeletePlan(planId) {
-        showConfirmModal('确定要删除这个用膳方案吗？', () => {
+        showConfirmModal('膳方得来不易，烧了就没了，陛下忍心吗？', () => {
             deletePlan(planId);
         });
     }
@@ -1032,17 +1034,17 @@
         renderPlanDetails();
     }
 
-    // 添加类目
+    // 添加类部
     function addCategory(planId) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
             const newCategory = {
                 id: generateId(),
-                name: `新类目 ${plan.categories.length + 1}`,
+                name: `新类部 ${plan.categories.length + 1}`,
                 count: 1,
                 allowRepeat: false,
                 items: [
-                    { id: generateId(), name: "新食品", weight: 100 }
+                    { id: generateId(), name: "新膳品", weight: 100 }
                 ]
             };
 
@@ -1053,10 +1055,10 @@
         }
     }
 
-    // 重命名类目
+    // 重命名类部
     function renameCategory(planId, categoryId, newName) {
         if (!newName.trim()) {
-            alert('类目名称不能为空');
+            alert('请陛下为本类部赐名！');
             renderPlanDetails();
             return;
         }
@@ -1067,7 +1069,7 @@
             if (category) {
                 // 检查名称是否已存在
                 if (plan.categories.some(c => c.id !== categoryId && c.name === newName)) {
-                    alert('类目名称已存在');
+                    alert('回陛下，这个类部已经有了');
                     renderPlanDetails();
                     return;
                 }
@@ -1079,7 +1081,7 @@
         }
     }
 
-    // 更新类目数量
+    // 更新类部数量
     function updateCategoryCount(planId, categoryId, count) {
         count = parseInt(count);
         if (isNaN(count) || count < 0 || count > 10000) {
@@ -1099,7 +1101,7 @@
         }
     }
 
-    // 切换类目是否可重复
+    // 切换类部是否可重复
     function toggleCategoryRepeat(planId, categoryId, allowRepeat) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
@@ -1112,26 +1114,26 @@
         }
     }
 
-    // 移动类目到其他方案
+    // 移动类部到其他方案
     function moveCategoryToPlan(planId, categoryId) {
         // 实现略长，简化处理
-        alert('移动类目功能待实现');
+        alert('移动类部功能待实现');
     }
 
-    // 复制类目到其他方案
+    // 复制类部到其他方案
     function copyCategoryToPlan(planId, categoryId) {
         // 实现略长，简化处理
-        alert('复制类目功能待实现');
+        alert('复制类部功能待实现');
     }
 
-    // 请求删除类目
+    // 请求删除类部
     function requestDeleteCategory(planId, categoryId) {
-        showConfirmModal('确定要删除这个类目吗？', () => {
+        showConfirmModal('创立之时，六部九卿无不曾为此夙兴夜寐，陛下真愿舍去此类部吗？', () => {
             deleteCategory(planId, categoryId);
         });
     }
 
-    // 删除类目
+    // 删除类部
     function deleteCategory(planId, categoryId) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
@@ -1153,7 +1155,7 @@
             if (category) {
                 const newItem = {
                     id: generateId(),
-                    name: "新食品",
+                    name: "新膳品",
                     weight: 100
                 };
 
@@ -1168,7 +1170,7 @@
     // 重命名食品
     function renameItem(planId, categoryId, itemId, newName) {
         if (!newName.trim()) {
-            alert('食品名称不能为空');
+            alert('请为膳品赐名');
             renderPlanDetails();
             return;
         }
@@ -1181,7 +1183,7 @@
                 if (item) {
                     // 检查名称是否已存在
                     if (category.items.some(i => i.id !== itemId && i.name === newName)) {
-                        alert('食品名称已存在');
+                        alert('回陛下，这个膳品已经有了');
                         renderPlanDetails();
                         return;
                     }
@@ -1219,7 +1221,7 @@
     function updateItemWeight(planId, categoryId, itemId, weight) {
         weight = parseInt(weight);
         if (isNaN(weight) || weight < 0 || weight > 10000) {
-            alert('权重必须在0-10000之间');
+            alert('权重须在0-10000之间');
             renderPlanDetails();
             return;
         }
@@ -1238,15 +1240,15 @@
         }
     }
 
-    // 移动食品到其他类目
+    // 移动食品到其他类部
     function moveItemToCategory(planId, categoryId, itemId) {
         // 实现略长，简化处理
-        alert('移动食品功能待实现');
+        alert('移动膳品功能待实现');
     }
 
     // 请求删除食品
     function requestDeleteItem(planId, categoryId, itemId) {
-        showConfirmModal('确定要删除这个食品吗？', () => {
+        showConfirmModal('膳品取材千味，各有所益，还望陛下雨露均沾！', () => {
             deleteItem(planId, categoryId, itemId);
         });
     }
@@ -1344,14 +1346,14 @@
         let isValid = true;
         let errorMessage = '';
 
-        // 对每个类目进行随机选择
+        // 对每个类部进行随机选择
         for (const category of plan.categories) {
             if (category.count === 0) continue; // 不选择
 
             // 检查不可重复时选择数量是否超过食品种类
             if (!category.allowRepeat && category.count > category.items.length) {
                 isValid = false;
-                errorMessage = `类目"${category.name}"不可重复，但选择数量(${category.count})超过食品种类数(${category.items.length})`;
+                errorMessage = `陛下，类部"${category.name}"不可重复，但选择份数(${category.count})已经超过膳品数(${category.items.length})`;
                 break;
             }
 
@@ -1359,7 +1361,7 @@
             const totalWeight = category.items.reduce((sum, item) => sum + item.weight, 0);
             if (totalWeight <= 0) {
                 isValid = false;
-                errorMessage = `类目"${category.name}"中没有有效权重的食品`;
+                errorMessage = `陛下，类部"${category.name}"中没有有效权重的膳品`;
                 break;
             }
 
@@ -1466,7 +1468,7 @@
 
     // 请求清除历史
     function requestClearHistory() {
-        showConfirmModal('确定要清除所有用膳历史记录吗？此操作不可撤销。', () => {
+        showConfirmModal('孤本圣方福泽万世，恳请陛下宽恕！', () => {
             clearHistory();
         });
     }
