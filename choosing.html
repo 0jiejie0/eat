@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>御膳翻牌器 - 皇家用膳选择</title>
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-secondary: #b8941f;
+            --gold-light: #f8e7b6;
+            --red-royal: #c53d2f;
+            --red-dark: #a52a2a;
+            --bg-cream: #fff9e6;
+            --bg-paper: #f9f3e5;
+            --text-dark: #5c3317;
+            --text-light: #8b4513;
+            --border-gold: #d4af37;
+            --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', 'SimSun', serif;
+            background-color: var(--bg-paper);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4af37' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--gold-primary);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 15px 0 10px;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--gold-light);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 12px 0 8px;
+            color: var(--text-dark);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .plan-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--gold-light);
+        }
+
+        .plan-selector label {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid var(--gold-light);
+            border-radius: 5px;
+            background: white;
+            color: var(--text-dark);
+            font-size: 1rem;
+            min-width: 200px;
+        }
+
+        .plans-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--gold-light);
+        }
+
+        .plan {
+            background-color: var(--bg-cream);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--gold-light);
+        }
+
+        .category {
+            background-color: white;
+            border-left: 4px solid var(--gold-primary);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .category-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--gold-light);
+        }
+
+        .category-name {
+            min-width: 120px;
+            padding: 8px;
+            border: 1px solid var(--gold-light);
+            border-radius: 4px;
+            font-size: 1rem;
+            background: var(--bg-cream);
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: var(--bg-cream);
+            border-radius: 5px;
+            border: 1px solid var(--gold-light);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .item-name {
+            flex-grow: 1;
+            padding: 6px 10px;
+            border: 1px solid var(--gold-light);
+            border-radius: 4px;
+            font-size: 1rem;
+            background: white;
+            min-width: 150px;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .weight-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .weight-label {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .count-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 10px;
+        }
+
+        .count-label {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        button {
+            background-color: var(--gold-primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: var(--gold-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background-color: #8b7d6b;
+        }
+
+        button.danger {
+            background-color: var(--red-royal);
+        }
+
+        button.danger:hover {
+            background-color: var(--red-dark);
+        }
+
+        button.large {
+            padding: 12px 24px;
+            font-size: 1.2rem;
+        }
+
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid var(--gold-light);
+            border-radius: 4px;
+            background: white;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            text-align: center;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .add-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .draw-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--gold-primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            padding: 10px;
+            margin: 8px 0;
+            background-color: var(--bg-cream);
+            border-radius: 5px;
+            border-left: 3px solid var(--gold-primary);
+        }
+
+        .history-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--gold-light);
+        }
+
+        .history-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: var(--bg-cream);
+            border-radius: 8px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--gold-light);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #8b7d6b;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .controls-row {
+                flex-direction: column;
+            }
+
+            .plan-selector {
+                width: 100%;
+                justify-content: center;
+            }
+
+            select {
+                min-width: 150px;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .item-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>御膳翻牌器</h1>
+    <p>皇家用膳选择，解决每日膳食烦恼</p>
+</header>
+
+<div class="container">
+    <div class="controls-row">
+        <button id="import-btn">导入配置</button>
+        <div class="plan-selector">
+            <label for="plan-select">当前方案:</label>
+            <select id="plan-select"></select>
+        </div>
+        <button id="export-btn">导出配置</button>
+    </div>
+
+    <div class="add-button-container">
+        <button id="add-plan">新增用膳方案</button>
+    </div>
+
+    <div class="draw-button-container">
+        <button id="draw-meal" class="large">翻牌用膳</button>
+    </div>
+
+    <div class="plans-container">
+        <h2>用膳方案详情</h2>
+        <div id="plan-details">
+            <!-- 方案详情将由JS动态生成 -->
+            <div class="empty-state">请选择或创建用膳方案</div>
+        </div>
+    </div>
+
+    <div class="history-container">
+        <h2>近期用膳记录</h2>
+        <div id="history-list">
+            <!-- 历史记录将由JS动态生成 -->
+            <div class="empty-state">暂无用膳记录</div>
+        </div>
+        <div class="add-button-container">
+            <button id="clear-history" class="secondary">清除历史</button>
+        </div>
+    </div>
+</div>
+
+<!-- 翻牌结果模态框 -->
+<div id="result-modal" class="modal">
+    <div class="modal-content">
+        <h2>今日御膳</h2>
+        <div id="result-content"></div>
+        <div class="modal-buttons">
+            <button id="confirm-result">确认</button>
+            <button id="cancel-result" class="secondary">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 备注模态框 -->
+<div id="note-modal" class="modal">
+    <div class="modal-content">
+        <h2>添加备注</h2>
+        <textarea id="note-input" rows="4" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
+        <div class="modal-buttons">
+            <button id="save-note">保存</button>
+            <button id="cancel-note" class="secondary">跳过</button>
+        </div>
+    </div>
+</div>
+
+<!-- 确认删除模态框 -->
+<div id="confirm-modal" class="modal">
+    <div class="modal-content">
+        <h2>确认操作</h2>
+        <p id="confirm-message">您确定要执行此操作吗？</p>
+        <div class="modal-buttons">
+            <button id="confirm-yes">确定</button>
+            <button id="confirm-no" class="secondary">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 导入导出模态框 -->
+<div id="import-export-modal" class="modal">
+    <div class="modal-content">
+        <h2 id="ie-title">导入配置</h2>
+        <textarea id="ie-textarea" rows="10" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
+        <div class="modal-buttons">
+            <button id="ie-action">确认</button>
+            <button id="ie-cancel" class="secondary">取消</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 数据结构定义
+    let state = {
+        plans: [],
+        currentPlanId: null,
+        history: [],
+        undoStacks: {}, // 每个方案的撤销栈
+        redoStacks: {}  // 每个方案的重做栈
+    };
+
+    // 全局变量用于确认操作
+    let confirmedCallback = null;
+    let currentResults = null;
+    let currentPlanForResults = null;
+
+    // 初始化函数
+    function init() {
+        loadData();
+        render();
+        setupEventListeners();
+    }
+
+    // 从localStorage加载数据
+    function loadData() {
+        const saved = localStorage.getItem('mealSelectorData');
+        if (saved) {
+            const data = JSON.parse(saved);
+            state.plans = data.plans || [];
+            state.history = data.history || [];
+            state.undoStacks = data.undoStacks || {};
+            state.redoStacks = data.redoStacks || {};
+
+            // 设置当前方案
+            if (state.plans.length > 0) {
+                state.currentPlanId = state.plans[0].id;
+            }
+        } else {
+            // 初始默认数据
+            createDefaultPlan();
+        }
+    }
+
+    // 创建默认方案
+    function createDefaultPlan() {
+        const planId = generateId();
+        const defaultPlan = {
+            id: planId,
+            name: "默认用膳方案",
+            categories: [
+                {
+                    id: generateId(),
+                    name: "主食",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "馒头", weight: 100 }
+                    ]
+                },
+                {
+                    id: generateId(),
+                    name: "配菜",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "小鸡炖蘑菇", weight: 100 }
+                    ]
+                },
+                {
+                    id: generateId(),
+                    name: "点心",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "橘子", weight: 100 },
+                        { id: generateId(), name: "爆米花", weight: 100 }
+                    ]
+                },
+                {
+                    id: generateId(),
+                    name: "饮品",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "小米粥", weight: 100 }
+                    ]
+                }
+            ]
+        };
+
+        state.plans.push(defaultPlan);
+        state.currentPlanId = planId;
+        state.undoStacks[planId] = [];
+        state.redoStacks[planId] = [];
+
+        saveState();
+    }
+
+    // 保存数据到localStorage
+    function saveState() {
+        localStorage.setItem('mealSelectorData', JSON.stringify(state));
+    }
+
+    // 渲染界面
+    function render() {
+        renderPlanSelector();
+        renderPlanDetails();
+        renderHistory();
+    }
+
+    // 渲染方案选择器
+    function renderPlanSelector() {
+        const planSelect = document.getElementById('plan-select');
+        planSelect.innerHTML = '';
+
+        state.plans.forEach(plan => {
+            const option = document.createElement('option');
+            option.value = plan.id;
+            option.textContent = plan.name;
+            option.selected = (plan.id === state.currentPlanId);
+            planSelect.appendChild(option);
+        });
+    }
+
+    // 渲染方案详情
+    function renderPlanDetails() {
+        const planDetails = document.getElementById('plan-details');
+
+        if (!state.currentPlanId || state.plans.length === 0) {
+            planDetails.innerHTML = '<div class="empty-state">请选择或创建用膳方案</div>';
+            return;
+        }
+
+        const plan = state.plans.find(p => p.id === state.currentPlanId);
+        if (!plan) return;
+
+        planDetails.innerHTML = `
+                <div class="plan">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+                        <h3>
+                            <input type="text" class="category-name" value="${plan.name}"
+                                onchange="renamePlan('${plan.id}', this.value)" style="min-width: 200px;">
+                        </h3>
+                        <div>
+                            <button onclick="copyPlan('${plan.id}')">复制</button>
+                            <button onclick="requestDeletePlan('${plan.id}')" class="danger">删除</button>
+                            ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ?
+            `<button onclick="undo('${plan.id}')">撤销</button>` : ''}
+                            ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ?
+            `<button onclick="redo('${plan.id}')">重做</button>` : ''}
+                        </div>
+                    </div>
+                    <div id="categories-${plan.id}">
+                        ${renderCategories(plan)}
+                    </div>
+                    <div class="add-button-container">
+                        <button onclick="addCategory('${plan.id}')">新增类目</button>
+                    </div>
+                </div>
+            `;
+    }
+
+    // 渲染类目
+    function renderCategories(plan) {
+        if (!plan.categories || plan.categories.length === 0) {
+            return '<div class="empty-state">此类目为空，点击"新增类目"添加</div>';
+        }
+
+        let html = '';
+        plan.categories.forEach(category => {
+            html += `
+                    <div class="category">
+                        <div class="category-header">
+                            <input type="text" class="category-name" value="${category.name}"
+                                onchange="renameCategory('${plan.id}', '${category.id}', this.value)">
+                            <div class="count-control">
+                                <span class="count-label">数量:</span>
+                                <button onclick="updateCategoryCount('${plan.id}', '${category.id}', ${category.count - 1})">-</button>
+                                <input type="number" min="0" max="10000" value="${category.count}"
+                                    onchange="updateCategoryCount('${plan.id}', '${category.id}', this.value)">
+                                <button onclick="updateCategoryCount('${plan.id}', '${category.id}', ${category.count + 1})">+</button>
+                            </div>
+                            <label>
+                                <input type="checkbox" ${category.allowRepeat ? 'checked' : ''}
+                                    onchange="toggleCategoryRepeat('${plan.id}', '${category.id}', this.checked)">
+                                可重复
+                            </label>
+                            <div>
+                                <button onclick="moveCategoryToPlan('${plan.id}', '${category.id}')">移动</button>
+                                <button onclick="copyCategoryToPlan('${plan.id}', '${category.id}')">复制</button>
+                                <button onclick="requestDeleteCategory('${plan.id}', '${category.id}')" class="danger">删除</button>
+                            </div>
+                        </div>
+                        <div id="items-${category.id}">
+                            ${renderItems(plan.id, category)}
+                        </div>
+                        <div class="add-button-container">
+                            <button onclick="addItem('${plan.id}', '${category.id}')">添加食品</button>
+                        </div>
+                    </div>
+                `;
+        });
+
+        return html;
+    }
+
+    // 渲染食品项
+    function renderItems(planId, category) {
+        if (!category.items || category.items.length === 0) {
+            return '<div class="empty-state">此类目暂无食品，点击"添加食品"</div>';
+        }
+
+        let html = '';
+        category.items.forEach(item => {
+            html += `
+                    <div class="item">
+                        <div class="item-header">
+                            <input type="text" class="item-name" value="${item.name}"
+                                onchange="renameItem('${planId}', '${category.id}', '${item.id}', this.value)">
+                            <div class="item-controls">
+                                <div class="weight-control">
+                                    <span class="weight-label">权重:</span>
+                                    <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', -10)">-</button>
+                                    <input type="number" min="0" max="10000" value="${item.weight}"
+                                        onchange="updateItemWeight('${planId}', '${category.id}', '${item.id}', this.value)">
+                                    <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', 10)">+</button>
+                                </div>
+                                <div>
+                                    <button onclick="moveItemToCategory('${planId}', '${category.id}', '${item.id}')">移动</button>
+                                    <button onclick="requestDeleteItem('${planId}', '${category.id}', '${item.id}')" class="danger">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+
+        return html;
+    }
+
+    // 渲染历史记录
+    function renderHistory() {
+        const historyList = document.getElementById('history-list');
+
+        if (state.history.length === 0) {
+            historyList.innerHTML = '<div class="empty-state">暂无用膳记录</div>';
+            return;
+        }
+
+        // 只显示最近10条记录
+        const recentHistory = state.history.slice(-10).reverse();
+
+        historyList.innerHTML = '';
+        recentHistory.forEach(record => {
+            const historyElement = document.createElement('div');
+            historyElement.className = 'history-item';
+
+            let resultsHtml = '';
+            for (const [category, items] of Object.entries(record.results)) {
+                resultsHtml += `<div><strong>${category}:</strong> ${items.join(', ')}</div>`;
+            }
+
+            historyElement.innerHTML = `
+                    <div><strong>${new Date(record.time).toLocaleString()}</strong></div>
+                    <div>方案: ${record.planName}</div>
+                    ${resultsHtml}
+                    ${record.note ? `<div><strong>备注:</strong> ${record.note}</div>` : ''}
+                `;
+
+            historyList.appendChild(historyElement);
+        });
+    }
+
+    // 设置事件监听器
+    function setupEventListeners() {
+        // 方案选择器
+        document.getElementById('plan-select').addEventListener('change', (e) => {
+            setCurrentPlan(e.target.value);
+        });
+
+        // 添加方案按钮
+        document.getElementById('add-plan').addEventListener('click', addNewPlan);
+
+        // 翻牌按钮
+        document.getElementById('draw-meal').addEventListener('click', () => {
+            if (state.currentPlanId) {
+                drawMeal(state.currentPlanId);
+            } else {
+                alert('请先选择或创建一个用膳方案');
+            }
+        });
+
+        // 导入按钮
+        document.getElementById('import-btn').addEventListener('click', () => {
+            showImportExportModal('导入配置', '导入', importData);
+        });
+
+        // 导出按钮
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const data = prepareExportData();
+            showImportExportModal('导出配置', '复制', exportData, JSON.stringify(data, null, 2));
+        });
+
+        // 清除历史按钮
+        document.getElementById('clear-history').addEventListener('click', requestClearHistory);
+
+        // 模态框按钮
+        setupModalEvents();
+    }
+
+    // 设置模态框事件
+    function setupModalEvents() {
+        // 结果模态框
+        document.getElementById('confirm-result').addEventListener('click', confirmResult);
+        document.getElementById('cancel-result').addEventListener('click', () => {
+            document.getElementById('result-modal').style.display = 'none';
+        });
+
+        // 备注模态框
+        document.getElementById('save-note').addEventListener('click', saveNote);
+        document.getElementById('cancel-note').addEventListener('click', () => {
+            document.getElementById('note-modal').style.display = 'none';
+            addToHistory(currentResults, '');
+        });
+
+        // 确认模态框
+        document.getElementById('confirm-yes').addEventListener('click', executeConfirmedAction);
+        document.getElementById('confirm-no').addEventListener('click', () => {
+            document.getElementById('confirm-modal').style.display = 'none';
+        });
+
+        // 导入导出模态框
+        document.getElementById('ie-action').addEventListener('click', executeIEAction);
+        document.getElementById('ie-cancel').addEventListener('click', () => {
+            document.getElementById('import-export-modal').style.display = 'none';
+        });
+    }
+
+    // 显示导入导出模态框
+    function showImportExportModal(title, actionText, actionHandler, content = '') {
+        document.getElementById('ie-title').textContent = title;
+        document.getElementById('ie-action').textContent = actionText;
+        document.getElementById('ie-textarea').value = content;
+
+        const modal = document.getElementById('import-export-modal');
+        modal.style.display = 'flex';
+        modal.dataset.action = actionHandler.name;
+
+        if (content) {
+            document.getElementById('ie-textarea').select();
+        }
+    }
+
+    // 执行导入导出操作
+    function executeIEAction() {
+        const action = document.getElementById('import-export-modal').dataset.action;
+        const text = document.getElementById('ie-textarea').value;
+
+        if (action === 'importData') {
+            importData(text);
+        } else if (action === 'exportData') {
+            exportData(text);
+        }
+
+        document.getElementById('import-export-modal').style.display = 'none';
+    }
+
+    // 导入数据
+    function importData(text) {
+        try {
+            const data = JSON.parse(text);
+            // 验证数据格式
+            if (data.plans && Array.isArray(data.plans)) {
+                state.plans = data.plans;
+                state.history = data.history || [];
+                state.undoStacks = data.undoStacks || {};
+                state.redoStacks = data.redoStacks || {};
+
+                if (state.plans.length > 0) {
+                    state.currentPlanId = state.plans[0].id;
+                }
+
+                saveState();
+                render();
+                alert('导入成功！');
+            } else {
+                alert('导入失败：数据格式不正确');
+            }
+        } catch (e) {
+            alert('导入失败：无效的JSON格式');
+        }
+    }
+
+    // 准备导出数据
+    function prepareExportData() {
+        return {
+            plans: state.plans,
+            history: state.history,
+            undoStacks: state.undoStacks,
+            redoStacks: state.redoStacks
+        };
+    }
+
+    // 导出数据
+    function exportData(text) {
+        try {
+            navigator.clipboard.writeText(text);
+            alert('配置已复制到剪贴板');
+        } catch (e) {
+            alert('复制失败，请手动复制文本');
+        }
+    }
+
+    // 添加新方案
+    function addNewPlan() {
+        const planId = generateId();
+        const newPlan = {
+            id: planId,
+            name: `新用膳方案 ${state.plans.length + 1}`,
+            categories: [
+                {
+                    id: generateId(),
+                    name: "主食",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "馒头", weight: 100 }
+                    ]
+                },
+                {
+                    id: generateId(),
+                    name: "配菜",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "小鸡炖蘑菇", weight: 100 }
+                    ]
+                },
+                {
+                    id: generateId(),
+                    name: "点心",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "橘子", weight: 100 },
+                        { id: generateId(), name: "爆米花", weight: 100 }
+                    ]
+                },
+                {
+                    id: generateId(),
+                    name: "饮品",
+                    count: 1,
+                    allowRepeat: false,
+                    items: [
+                        { id: generateId(), name: "小米粥", weight: 100 }
+                    ]
+                }
+            ]
+        };
+
+        state.plans.push(newPlan);
+        state.undoStacks[planId] = [];
+        state.redoStacks[planId] = [];
+
+        saveState();
+        saveStateToStack(planId);
+        render();
+    }
+
+    // 重命名方案
+    function renamePlan(planId, newName) {
+        if (!newName.trim()) {
+            alert('方案名称不能为空');
+            render();
+            return;
+        }
+
+        // 检查名称是否已存在
+        if (state.plans.some(p => p.id !== planId && p.name === newName)) {
+            alert('方案名称已存在');
+            render();
+            return;
+        }
+
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            plan.name = newName;
+            saveState();
+            saveStateToStack(planId);
+            renderPlanSelector();
+        }
+    }
+
+    // 复制方案
+    function copyPlan(planId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const newPlanId = generateId();
+            // 深拷贝方案
+            const copiedPlan = JSON.parse(JSON.stringify(plan));
+            copiedPlan.id = newPlanId;
+            copiedPlan.name = `${plan.name} 副本`;
+
+            // 为所有子元素生成新ID
+            copiedPlan.categories.forEach(category => {
+                category.id = generateId();
+                category.items.forEach(item => {
+                    item.id = generateId();
+                });
+            });
+
+            state.plans.push(copiedPlan);
+            state.undoStacks[newPlanId] = [];
+            state.redoStacks[newPlanId] = [];
+
+            saveState();
+            render();
+        }
+    }
+
+    // 请求删除方案
+    function requestDeletePlan(planId) {
+        showConfirmModal('确定要删除这个用膳方案吗？', () => {
+            deletePlan(planId);
+        });
+    }
+
+    // 删除方案
+    function deletePlan(planId) {
+        const index = state.plans.findIndex(p => p.id === planId);
+        if (index !== -1) {
+            state.plans.splice(index, 1);
+
+            // 如果删除的是当前方案，设置第一个方案为当前
+            if (state.currentPlanId === planId) {
+                state.currentPlanId = state.plans.length > 0 ? state.plans[0].id : null;
+            }
+
+            // 清除相关的撤销重做栈
+            delete state.undoStacks[planId];
+            delete state.redoStacks[planId];
+
+            saveState();
+            render();
+        }
+    }
+
+    // 设置当前方案
+    function setCurrentPlan(planId) {
+        state.currentPlanId = planId;
+        saveState();
+        renderPlanDetails();
+    }
+
+    // 添加类目
+    function addCategory(planId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const newCategory = {
+                id: generateId(),
+                name: `新类目 ${plan.categories.length + 1}`,
+                count: 1,
+                allowRepeat: false,
+                items: [
+                    { id: generateId(), name: "新食品", weight: 100 }
+                ]
+            };
+
+            plan.categories.push(newCategory);
+            saveState();
+            saveStateToStack(planId);
+            renderPlanDetails();
+        }
+    }
+
+    // 重命名类目
+    function renameCategory(planId, categoryId, newName) {
+        if (!newName.trim()) {
+            alert('类目名称不能为空');
+            renderPlanDetails();
+            return;
+        }
+
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                // 检查名称是否已存在
+                if (plan.categories.some(c => c.id !== categoryId && c.name === newName)) {
+                    alert('类目名称已存在');
+                    renderPlanDetails();
+                    return;
+                }
+
+                category.name = newName;
+                saveState();
+                saveStateToStack(planId);
+            }
+        }
+    }
+
+    // 更新类目数量
+    function updateCategoryCount(planId, categoryId, count) {
+        count = parseInt(count);
+        if (isNaN(count) || count < 0 || count > 10000) {
+            alert('数量必须在0-10000之间');
+            renderPlanDetails();
+            return;
+        }
+
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                category.count = count;
+                saveState();
+                saveStateToStack(planId);
+            }
+        }
+    }
+
+    // 切换类目是否可重复
+    function toggleCategoryRepeat(planId, categoryId, allowRepeat) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                category.allowRepeat = allowRepeat;
+                saveState();
+                saveStateToStack(planId);
+            }
+        }
+    }
+
+    // 移动类目到其他方案
+    function moveCategoryToPlan(planId, categoryId) {
+        // 实现略长，简化处理
+        alert('移动类目功能待实现');
+    }
+
+    // 复制类目到其他方案
+    function copyCategoryToPlan(planId, categoryId) {
+        // 实现略长，简化处理
+        alert('复制类目功能待实现');
+    }
+
+    // 请求删除类目
+    function requestDeleteCategory(planId, categoryId) {
+        showConfirmModal('确定要删除这个类目吗？', () => {
+            deleteCategory(planId, categoryId);
+        });
+    }
+
+    // 删除类目
+    function deleteCategory(planId, categoryId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const index = plan.categories.findIndex(c => c.id === categoryId);
+            if (index !== -1) {
+                plan.categories.splice(index, 1);
+                saveState();
+                saveStateToStack(planId);
+                renderPlanDetails();
+            }
+        }
+    }
+
+    // 添加食品
+    function addItem(planId, categoryId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                const newItem = {
+                    id: generateId(),
+                    name: "新食品",
+                    weight: 100
+                };
+
+                category.items.push(newItem);
+                saveState();
+                saveStateToStack(planId);
+                renderPlanDetails();
+            }
+        }
+    }
+
+    // 重命名食品
+    function renameItem(planId, categoryId, itemId, newName) {
+        if (!newName.trim()) {
+            alert('食品名称不能为空');
+            renderPlanDetails();
+            return;
+        }
+
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                const item = category.items.find(i => i.id === itemId);
+                if (item) {
+                    // 检查名称是否已存在
+                    if (category.items.some(i => i.id !== itemId && i.name === newName)) {
+                        alert('食品名称已存在');
+                        renderPlanDetails();
+                        return;
+                    }
+
+                    item.name = newName;
+                    saveState();
+                    saveStateToStack(planId);
+                }
+            }
+        }
+    }
+
+    // 调整食品权重
+    function adjustItemWeight(planId, categoryId, itemId, delta) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                const item = category.items.find(i => i.id === itemId);
+                if (item) {
+                    let newWeight = item.weight + delta;
+                    if (newWeight < 0) newWeight = 0;
+                    if (newWeight > 10000) newWeight = 10000;
+
+                    item.weight = newWeight;
+                    saveState();
+                    saveStateToStack(planId);
+                    renderPlanDetails();
+                }
+            }
+        }
+    }
+
+    // 更新食品权重
+    function updateItemWeight(planId, categoryId, itemId, weight) {
+        weight = parseInt(weight);
+        if (isNaN(weight) || weight < 0 || weight > 10000) {
+            alert('权重必须在0-10000之间');
+            renderPlanDetails();
+            return;
+        }
+
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                const item = category.items.find(i => i.id === itemId);
+                if (item) {
+                    item.weight = weight;
+                    saveState();
+                    saveStateToStack(planId);
+                }
+            }
+        }
+    }
+
+    // 移动食品到其他类目
+    function moveItemToCategory(planId, categoryId, itemId) {
+        // 实现略长，简化处理
+        alert('移动食品功能待实现');
+    }
+
+    // 请求删除食品
+    function requestDeleteItem(planId, categoryId, itemId) {
+        showConfirmModal('确定要删除这个食品吗？', () => {
+            deleteItem(planId, categoryId, itemId);
+        });
+    }
+
+    // 删除食品
+    function deleteItem(planId, categoryId, itemId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            const category = plan.categories.find(c => c.id === categoryId);
+            if (category) {
+                const index = category.items.findIndex(i => i.id === itemId);
+                if (index !== -1) {
+                    category.items.splice(index, 1);
+                    saveState();
+                    saveStateToStack(planId);
+                    renderPlanDetails();
+                }
+            }
+        }
+    }
+
+    // 保存状态到撤销栈
+    function saveStateToStack(planId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (plan) {
+            if (!state.undoStacks[planId]) {
+                state.undoStacks[planId] = [];
+            }
+
+            // 保存当前状态的深拷贝
+            state.undoStacks[planId].push(JSON.parse(JSON.stringify(plan)));
+
+            // 限制栈大小
+            if (state.undoStacks[planId].length > 50) {
+                state.undoStacks[planId].shift();
+            }
+
+            // 清空重做栈
+            state.redoStacks[planId] = [];
+
+            saveState();
+        }
+    }
+
+    // 撤销操作
+    function undo(planId) {
+        if (state.undoStacks[planId] && state.undoStacks[planId].length > 0) {
+            const plan = state.plans.find(p => p.id === planId);
+            if (plan) {
+                // 保存当前状态到重做栈
+                if (!state.redoStacks[planId]) {
+                    state.redoStacks[planId] = [];
+                }
+                state.redoStacks[planId].push(JSON.parse(JSON.stringify(plan)));
+
+                // 从撤销栈恢复状态
+                const previousState = state.undoStacks[planId].pop();
+                const index = state.plans.findIndex(p => p.id === planId);
+                state.plans[index] = previousState;
+
+                saveState();
+                renderPlanDetails();
+            }
+        }
+    }
+
+    // 重做操作
+    function redo(planId) {
+        if (state.redoStacks[planId] && state.redoStacks[planId].length > 0) {
+            const plan = state.plans.find(p => p.id === planId);
+            if (plan) {
+                // 保存当前状态到撤销栈
+                if (!state.undoStacks[planId]) {
+                    state.undoStacks[planId] = [];
+                }
+                state.undoStacks[planId].push(JSON.parse(JSON.stringify(plan)));
+
+                // 从重做栈恢复状态
+                const nextState = state.redoStacks[planId].pop();
+                const index = state.plans.findIndex(p => p.id === planId);
+                state.plans[index] = nextState;
+
+                saveState();
+                renderPlanDetails();
+            }
+        }
+    }
+
+    // 随机选择食品
+    function drawMeal(planId) {
+        const plan = state.plans.find(p => p.id === planId);
+        if (!plan) return;
+
+        const results = {};
+        let isValid = true;
+        let errorMessage = '';
+
+        // 对每个类目进行随机选择
+        for (const category of plan.categories) {
+            if (category.count === 0) continue; // 不选择
+
+            // 检查不可重复时选择数量是否超过食品种类
+            if (!category.allowRepeat && category.count > category.items.length) {
+                isValid = false;
+                errorMessage = `类目"${category.name}"不可重复，但选择数量(${category.count})超过食品种类数(${category.items.length})`;
+                break;
+            }
+
+            // 计算总权重
+            const totalWeight = category.items.reduce((sum, item) => sum + item.weight, 0);
+            if (totalWeight <= 0) {
+                isValid = false;
+                errorMessage = `类目"${category.name}"中没有有效权重的食品`;
+                break;
+            }
+
+            // 选择食品
+            const selectedItems = [];
+            const availableItems = [...category.items]; // 可用食品列表（用于不可重复的情况）
+
+            for (let i = 0; i < category.count; i++) {
+                if (availableItems.length === 0) break;
+
+                // 随机选择
+                let random = Math.random() * totalWeight;
+                let selectedItem = null;
+
+                for (const item of availableItems) {
+                    random -= item.weight;
+                    if (random <= 0) {
+                        selectedItem = item;
+                        break;
+                    }
+                }
+
+                // 如果权重计算有问题，随机选择一个
+                if (!selectedItem) {
+                    selectedItem = availableItems[Math.floor(Math.random() * availableItems.length)];
+                }
+
+                selectedItems.push(selectedItem.name);
+
+                // 如果不可重复，从可用列表中移除
+                if (!category.allowRepeat) {
+                    const index = availableItems.findIndex(item => item.id === selectedItem.id);
+                    if (index !== -1) {
+                        availableItems.splice(index, 1);
+                    }
+                }
+            }
+
+            results[category.name] = selectedItems;
+        }
+
+        if (!isValid) {
+            alert(errorMessage);
+            return;
+        }
+
+        // 显示结果
+        showResultsModal(results, plan);
+    }
+
+    // 显示结果模态框
+    function showResultsModal(results, plan) {
+        currentResults = results;
+        currentPlanForResults = plan;
+
+        const resultContent = document.getElementById('result-content');
+        resultContent.innerHTML = '';
+
+        for (const [category, items] of Object.entries(results)) {
+            if (items.length > 0) {
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'result-item';
+                categoryElement.innerHTML = `<strong>${category}:</strong> ${items.join(', ')}`;
+                resultContent.appendChild(categoryElement);
+            }
+        }
+
+        document.getElementById('result-modal').style.display = 'flex';
+    }
+
+    // 确认结果
+    function confirmResult() {
+        document.getElementById('result-modal').style.display = 'none';
+        document.getElementById('note-modal').style.display = 'flex';
+        document.getElementById('note-input').value = '';
+    }
+
+    // 保存备注
+    function saveNote() {
+        const note = document.getElementById('note-input').value;
+        document.getElementById('note-modal').style.display = 'none';
+        addToHistory(currentResults, note);
+    }
+
+    // 添加到历史记录
+    function addToHistory(results, note) {
+        state.history.push({
+            id: generateId(),
+            planId: currentPlanForResults.id,
+            planName: currentPlanForResults.name,
+            results: results,
+            time: new Date().toISOString(),
+            note: note
+        });
+
+        // 限制历史记录数量
+        if (state.history.length > 1000) {
+            state.history = state.history.slice(-1000);
+        }
+
+        saveState();
+        render();
+    }
+
+    // 请求清除历史
+    function requestClearHistory() {
+        showConfirmModal('确定要清除所有用膳历史记录吗？此操作不可撤销。', () => {
+            clearHistory();
+        });
+    }
+
+    // 清除历史
+    function clearHistory() {
+        state.history = [];
+        saveState();
+        render();
+    }
+
+    // 显示确认模态框
+    function showConfirmModal(message, callback) {
+        document.getElementById('confirm-message').textContent = message;
+        document.getElementById('confirm-modal').style.display = 'flex';
+        confirmedCallback = callback;
+    }
+
+    // 执行确认的操作
+    function executeConfirmedAction() {
+        if (confirmedCallback) {
+            confirmedCallback();
+            confirmedCallback = null;
+        }
+        document.getElementById('confirm-modal').style.display = 'none';
+    }
+
+    // 生成唯一ID
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // 初始化应用
+    window.onload = init;
+</script>
+</body>
+</html>
