@@ -428,7 +428,7 @@
             <div class="empty-state">暂无用膳记录</div>
         </div>
         <div class="add-button-container">
-            <button id="clear-history" class="secondary">来人，给朕烧了</button>
+            <button id="clear-history" class="secondary">来人，把这焚了</button>
         </div>
     </div>
 </div>
@@ -627,7 +627,7 @@
                         </h3>
                         <div>
                             <button onclick="copyPlan('${plan.id}')">再誊份本膳方</button>
-                            <button onclick="requestDeletePlan('${plan.id}')" class="danger">烧了</button>
+                            <button onclick="requestDeletePlan('${plan.id}')" class="danger">焚毁</button>
                             ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ?
             `<button onclick="undo('${plan.id}')">改回来</button>` : ''}
                             ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ?
@@ -1006,7 +1006,7 @@
 
     // 请求删除方案
     function requestDeletePlan(planId) {
-        showConfirmModal('膳方得来不易，烧了就没了，陛下忍心吗？', () => {
+        showConfirmModal('膳方得来不易，焚毁就找不回了，陛下忍心吗？', () => {
             deletePlan(planId);
         });
     }
