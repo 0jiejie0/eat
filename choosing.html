@@ -394,23 +394,24 @@
 </header>
 
 <div class="container">
-    <div class="controls-row">
-        <button id="import-btn">换新御方</button>
-        <button id="add-plan">新增膳方</button>
-        <button id="export-btn">誊出御方</button>
-    </div>
-
     <div class="draw-button-container">
         <button id="draw-meal" class="large">翻牌子</button>
     </div>
 
+    <div class="controls-row">
+        <button id="import-btn">换新御方</button>
+        <button id="export-btn">誊出御方</button>
+    </div>
+
     <!--    <div class="add-button-container">-->
     <!--    </div>-->
+    <div></div>
 
-    <div class="plan-selector">
+    <div class="plan-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
         <!--            <label for="plan-select">当前方案:</label>-->
         <label for="plan-select">看朕心情择膳：</label>
         <select id="plan-select"></select>
+        <button id="add-plan">新增膳方</button>
     </div>
 
     <div class="plans-container">
