@@ -515,9 +515,9 @@
             state.undoStacks = data.undoStacks || {};
             state.redoStacks = data.redoStacks || {};
 
-            // 设置当前方案
+            // 设置当前方案，打开上次膳方
             if (state.plans.length > 0) {
-                state.currentPlanId = state.plans[0].id;
+                state.currentPlanId = data.currentPlanId;
             }
         } else {
             // 初始默认数据
