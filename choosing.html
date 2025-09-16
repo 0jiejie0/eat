@@ -385,13 +385,18 @@
                 justify-content: space-between;
             }
 
-            #plan-details > div > div > h3, #plan-details > div > div > div > div > div > div > input {
+            #plan-details > div > div > h3 {
+                width: 76%;
+                text-align: left;
+            }
+
+            #plan-details > div > div > div > div > div > div > input {
                 width: 100%;
             }
 
             #plan-details > div > div > h3 > input {
                 min-width: 200px;
-                text-align: center;
+                /*text-align: center;*/
                 width: 100%
             }
 
@@ -435,6 +440,8 @@
         <label for="plan-select">看朕心情择膳：</label>
         <select id="plan-select"></select>
         <button id="add-plan">新增膳方</button>
+        <button onclick="copyPlan(`${state.currentPlanId}`)">再制本方</button>
+        <button onclick="requestDeletePlan(`${state.currentPlanId}`)" class="danger">焚毁膳方</button>
     </div>
 
     <div class="plans-container">
@@ -656,8 +663,6 @@
                             <button onclick="redo('${plan.id}')"
                                 ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ? '' :
             ' disabled style="background: #b8941f" '}>></button>
-                            <button onclick="copyPlan('${plan.id}')">再誊份本膳方</button>
-                            <button onclick="requestDeletePlan('${plan.id}')" class="danger">焚毁</button>
                         </div>
                     </div>
                     <div id="categories-${plan.id}">
