@@ -658,7 +658,7 @@
         plan.categories.forEach(category => {
             html += `
                     <div class="category">
-                        <div class="category-header">
+                        <div class="category-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
                             <input type="text" class="category-name" value="${category.name}"
                                 onchange="renameCategory('${plan.id}', '${category.id}', this.value)">
                             <label>
@@ -674,9 +674,9 @@
                                 <span class="count-label">份</span>
                             </div>
                             <div>
-                                <button onclick="moveCategoryToPlan('${plan.id}', '${category.id}')">移动</button>
-                                <button onclick="copyCategoryToPlan('${plan.id}', '${category.id}')">复制</button>
-                                <button onclick="requestDeleteCategory('${plan.id}', '${category.id}')" class="danger">勾去</button>
+                                <button onclick="moveCategoryToPlan('${plan.id}', '${category.id}')">移</button>
+                                <button onclick="copyCategoryToPlan('${plan.id}', '${category.id}')">拓</button>
+                                <button onclick="requestDeleteCategory('${plan.id}', '${category.id}')" class="danger">×</button>
                             </div>
                         </div>
                         <div id="items-${category.id}">
@@ -707,15 +707,15 @@
                                 onchange="renameItem('${planId}', '${category.id}', '${item.id}', this.value)">
                             <div class="item-controls">
                                 <div class="weight-control">
-                                    <span class="weight-label">权重:</span>
+                                    <span class="weight-label">权:</span>
                                     <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', -1)">-</button>
                                     <input type="number" min="0" max="10000" value="${item.weight}"
                                         onchange="updateItemWeight('${planId}', '${category.id}', '${item.id}', this.value)">
                                     <button onclick="adjustItemWeight('${planId}', '${category.id}', '${item.id}', 1)">+</button>
                                 </div>
                                 <div>
-                                    <button onclick="moveItemToCategory('${planId}', '${category.id}', '${item.id}')">移动</button>
-                                    <button onclick="requestDeleteItem('${planId}', '${category.id}', '${item.id}')" class="danger">勾去</button>
+                                    <button onclick="moveItemToCategory('${planId}', '${category.id}', '${item.id}')">移</button>
+                                    <button onclick="requestDeleteItem('${planId}', '${category.id}', '${item.id}')" class="danger">×</button>
                                 </div>
                             </div>
                         </div>
@@ -904,7 +904,7 @@
         const planId = generateId();
         const newPlan = {
             id: planId,
-            name: `新用膳方案 ${state.plans.length + 1}`,
+            name: `新用膳方案${state.plans.length + 1}`,
             categories: [
                 {
                     id: generateId(),
@@ -987,7 +987,7 @@
             // 深拷贝方案
             const copiedPlan = JSON.parse(JSON.stringify(plan));
             copiedPlan.id = newPlanId;
-            copiedPlan.name = `${plan.name} 副本`;
+            copiedPlan.name = `${plan.name}新`;
 
             // 为所有子元素生成新ID
             copiedPlan.categories.forEach(category => {
@@ -1165,9 +1165,9 @@
 
     // 请求删除类部
     function requestDeleteCategory(planId, categoryId) {
-        showConfirmModal('创立之时，六部九卿无不曾为此夙兴夜寐，陛下真愿舍去此类部吗？', () => {
-            deleteCategory(planId, categoryId);
-        });
+        deleteCategory(planId, categoryId);
+        // showConfirmModal('创立之时，六部九卿无不曾为此夙兴夜寐，陛下真愿舍去此类部吗？', () => {
+        // });
     }
 
     // 删除类部
@@ -1192,7 +1192,7 @@
             if (category) {
                 const newItem = {
                     id: generateId(),
-                    name: "新膳品",
+                    name: `新膳品 ${category.items.length + 1}`,
                     weight: 100
                 };
 
@@ -1285,9 +1285,9 @@
 
     // 请求删除膳品
     function requestDeleteItem(planId, categoryId, itemId) {
-        showConfirmModal('膳品取材千味，各有所益，还望陛下雨露均沾！', () => {
-            deleteItem(planId, categoryId, itemId);
-        });
+        deleteItem(planId, categoryId, itemId);
+        // showConfirmModal('膳品取材千味，各有所益，还望陛下雨露均沾！', () => {
+        // });
     }
 
     // 删除膳品
