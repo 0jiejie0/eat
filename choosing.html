@@ -980,6 +980,7 @@
         saveState();
         render();
         changeCurrentPlan(planId);
+        focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
     }
 
     // 重命名方案
@@ -1003,6 +1004,7 @@
             plan.name = newName;
             saveState();
             renderPlanSelector();
+            renderPlanDetails();
         }
     }
 
@@ -1031,6 +1033,7 @@
             saveState();
             render();
             changeCurrentPlan(newPlanId);
+            focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
         }
     }
 
@@ -1099,6 +1102,7 @@
             plan.categories.push(newCategory);
             saveState();
             renderPlanDetails();
+            focusOn(`#categories-${plan.id} > div:nth-child(${plan.categories.length}) > div.category-header > input`);
         }
     }
 
@@ -1124,6 +1128,7 @@
                 saveStateToStack(planId);
                 category.name = newName;
                 saveState();
+                renderPlanDetails();
             }
         }
     }
@@ -1227,7 +1232,17 @@
                 category.items.push(newItem);
                 saveState();
                 renderPlanDetails();
+                focusOn(`#items-${category.id} > div:nth-child(${category.items.length}) > div > input`);
             }
+        }
+    }
+
+    function focusOn(selector) {
+        let element = document.querySelector(selector);
+        element.placeholder = element.value
+        element.value = ''
+        if (element) {
+            element.focus();
         }
     }
 
@@ -1255,6 +1270,7 @@
                     saveStateToStack(planId);
                     item.name = newName;
                     saveState();
+                    renderPlanDetails();
                 }
             }
         }
@@ -1372,6 +1388,7 @@
                 state.plans[index] = previousState;
 
                 saveState();
+                renderPlanSelector();
                 renderPlanDetails();
             }
         }
@@ -1394,6 +1411,7 @@
                 state.plans[index] = nextState;
 
                 saveState();
+                renderPlanSelector();
                 renderPlanDetails();
             }
         }
