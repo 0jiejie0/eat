@@ -626,10 +626,12 @@
                                 onchange="renamePlan('${plan.id}', this.value)" style="min-width: 200px;">
                         </h3>
                         <div>
-                            ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ?
-            `<button onclick="undo('${plan.id}')">改回来<</button>` : ''}
-                            ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ?
-            `<button onclick="redo('${plan.id}')">>改过去</button>` : ''}
+                            <button onclick="undo('${plan.id}')"
+                                ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ? '' :
+            ` disabled style="background: #b8941f" `}><</button>
+                            <button onclick="redo('${plan.id}')"
+                                ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ? '' :
+            ' disabled style="background: #b8941f" '}>></button>
                             <button onclick="copyPlan('${plan.id}')">再誊份本膳方</button>
                             <button onclick="requestDeletePlan('${plan.id}')" class="danger">焚毁</button>
                         </div>
