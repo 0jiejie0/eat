@@ -489,7 +489,7 @@
         plans: [],
         currentPlanId: null,
         history: [],
-        undoStacks: {}, // 每个方案的撤销栈
+        undoStacks: {}, // 每个方案的撤销栈，保存了每次操作时膳方状态的全量信息，可优化为增量
         redoStacks: {}  // 每个方案的重做栈
     };
 
@@ -626,12 +626,12 @@
                                 onchange="renamePlan('${plan.id}', this.value)" style="min-width: 200px;">
                         </h3>
                         <div>
+                            ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ?
+            `<button onclick="undo('${plan.id}')">改回来<</button>` : ''}
+                            ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ?
+            `<button onclick="redo('${plan.id}')">>改过去</button>` : ''}
                             <button onclick="copyPlan('${plan.id}')">再誊份本膳方</button>
                             <button onclick="requestDeletePlan('${plan.id}')" class="danger">焚毁</button>
-                            ${state.undoStacks[plan.id] && state.undoStacks[plan.id].length > 0 ?
-            `<button onclick="undo('${plan.id}')">改回来</button>` : ''}
-                            ${state.redoStacks[plan.id] && state.redoStacks[plan.id].length > 0 ?
-            `<button onclick="redo('${plan.id}')">改过去</button>` : ''}
                         </div>
                     </div>
                     <div id="categories-${plan.id}">
@@ -947,7 +947,6 @@
         state.redoStacks[planId] = [];
 
         saveState();
-        saveStateToStack(planId);
         render();
         changeCurrentPlan(planId);
     }
@@ -969,9 +968,9 @@
 
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
+            saveStateToStack(planId);
             plan.name = newName;
             saveState();
-            saveStateToStack(planId);
             renderPlanSelector();
         }
     }
@@ -1065,9 +1064,9 @@
                 ]
             };
 
+            saveStateToStack(planId);
             plan.categories.push(newCategory);
             saveState();
-            saveStateToStack(planId);
             renderPlanDetails();
         }
     }
@@ -1091,9 +1090,9 @@
                     return;
                 }
 
+                saveStateToStack(planId);
                 category.name = newName;
                 saveState();
-                saveStateToStack(planId);
             }
         }
     }
@@ -1111,9 +1110,9 @@
         if (plan) {
             const category = plan.categories.find(c => c.id === categoryId);
             if (category) {
+                saveStateToStack(planId);
                 category.count = count;
                 saveState();
-                saveStateToStack(planId);
             }
         }
     }
@@ -1127,23 +1126,23 @@
                 let count = category.count + delta;
                 if (count < 0) count = 0;
                 if (count > 10000) count = 10000;
+                saveStateToStack(planId);
                 category.count = count;
                 saveState();
-                saveStateToStack(planId);
                 renderPlanDetails();
             }
         }
     }
 
-    // 切换类部是否可重复
+    // 切换膳品是否可重复
     function toggleCategoryRepeat(planId, categoryId, allowRepeat) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
             const category = plan.categories.find(c => c.id === categoryId);
             if (category) {
+                saveStateToStack(planId);
                 category.allowRepeat = allowRepeat;
                 saveState();
-                saveStateToStack(planId);
             }
         }
     }
@@ -1173,9 +1172,9 @@
         if (plan) {
             const index = plan.categories.findIndex(c => c.id === categoryId);
             if (index !== -1) {
+                saveStateToStack(planId);
                 plan.categories.splice(index, 1);
                 saveState();
-                saveStateToStack(planId);
                 renderPlanDetails();
             }
         }
@@ -1193,9 +1192,9 @@
                     weight: 100
                 };
 
+                saveStateToStack(planId);
                 category.items.push(newItem);
                 saveState();
-                saveStateToStack(planId);
                 renderPlanDetails();
             }
         }
@@ -1222,9 +1221,9 @@
                         return;
                     }
 
+                    saveStateToStack(planId);
                     item.name = newName;
                     saveState();
-                    saveStateToStack(planId);
                 }
             }
         }
@@ -1242,9 +1241,9 @@
                     if (newWeight < 0) newWeight = 0;
                     if (newWeight > 10000) newWeight = 10000;
 
+                    saveStateToStack(planId);
                     item.weight = newWeight;
                     saveState();
-                    saveStateToStack(planId);
                     renderPlanDetails();
                 }
             }
@@ -1266,9 +1265,9 @@
             if (category) {
                 const item = category.items.find(i => i.id === itemId);
                 if (item) {
+                    saveStateToStack(planId);
                     item.weight = weight;
                     saveState();
-                    saveStateToStack(planId);
                 }
             }
         }
@@ -1295,9 +1294,9 @@
             if (category) {
                 const index = category.items.findIndex(i => i.id === itemId);
                 if (index !== -1) {
+                    saveStateToStack(planId);
                     category.items.splice(index, 1);
                     saveState();
-                    saveStateToStack(planId);
                     renderPlanDetails();
                 }
             }
@@ -1316,14 +1315,12 @@
             state.undoStacks[planId].push(JSON.parse(JSON.stringify(plan)));
 
             // 限制栈大小
-            if (state.undoStacks[planId].length > 50) {
+            if (state.undoStacks[planId].length > 500) {
                 state.undoStacks[planId].shift();
             }
 
             // 清空重做栈
             state.redoStacks[planId] = [];
-
-            saveState();
         }
     }
 
