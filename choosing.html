@@ -355,6 +355,24 @@
             font-style: italic;
         }
 
+        .target-option {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: var(--bg-cream);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .target-option:hover {
+            background-color: var(--gold-light);
+        }
+
+        .target-option.selected {
+            background-color: var(--gold-primary);
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .controls-row {
                 flex-direction: column;
@@ -476,6 +494,45 @@
     </div>
 </div>
 
+<!-- 移动类部模态框 -->
+<div id="move-category-modal" class="modal">
+    <div class="modal-content">
+        <h2>奉天承运，皇帝诏曰</h2>
+        <p>将类部 "<span id="moving-category-name"></span>" 即刻移动到:</p>
+        <div id="target-plan-list" style="margin: 15px 0;"></div>
+        <div class="modal-buttons">
+            <button id="confirm-move-category">君无戏言</button>
+            <button id="cancel-move-category" class="secondary">适才相戏耳</button>
+        </div>
+    </div>
+</div>
+
+<!-- 移动膳品模态框 -->
+<div id="move-item-modal" class="modal">
+    <div class="modal-content">
+        <h2>奉天承运，皇帝诏曰</h2>
+        <p>将膳品 "<span id="moving-item-name"></span>" 即刻移动到:</p>
+        <div id="target-category-list" style="margin: 15px 0;"></div>
+        <div class="modal-buttons">
+            <button id="confirm-move-item">君无戏言</button>
+            <button id="cancel-move-item" class="secondary">适才相戏耳</button>
+        </div>
+    </div>
+</div>
+
+<!-- 复制类部模态框 -->
+<div id="copy-category-modal" class="modal">
+    <div class="modal-content">
+        <h2>奉天承运，皇帝诏曰</h2>
+        <p>将类部 "<span id="copying-category-name"></span>" 即刻拓印到:</p>
+        <div id="target-copy-plan-list" style="margin: 15px 0;"></div>
+        <div class="modal-buttons">
+            <button id="confirm-copy-category">君无戏言</button>
+            <button id="cancel-copy-category" class="secondary">适才相戏耳</button>
+        </div>
+    </div>
+</div>
+
 <!-- 备注模态框 -->
 <div id="note-modal" class="modal">
     <div class="modal-content">
@@ -508,8 +565,8 @@
         <textarea id="ie-textarea" rows="10"
                   style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         <div class="modal-buttons">
-            <button id="ie-action">确认3</button>
-            <button id="ie-cancel" class="secondary">取消3</button>
+            <button id="ie-action">君无戏言</button>
+            <button id="ie-cancel" class="secondary">适才相戏耳</button>
         </div>
     </div>
 </div>
@@ -528,6 +585,13 @@
     let confirmedCallback = null;
     let currentResults = null;
     let currentPlanForResults = null;
+
+    // 全局变量，用于存储移动/复制操作的相关信息
+    let targetPlanId = null;
+    let targetCategoryId = null;
+    let copyingCategoryId = null;
+    let movingCategoryId = null;
+    let movingItemId = null;
 
     // 初始化函数
     function init() {
@@ -691,7 +755,7 @@
                             <label>
                                 <input type="checkbox" ${category.allowRepeat ? 'checked' : ''}
                                     onchange="toggleCategoryRepeat('${plan.id}', '${category.id}', this.checked)">
-                                可复
+                                叠膳
                             </label>
                             <div class="count-control">
                                 <button onclick="adjustCategoryCount('${plan.id}', '${category.id}', -1)">-</button>
@@ -819,6 +883,24 @@
         // 清除历史按钮
         document.getElementById('clear-history').addEventListener('click', requestClearHistory);
 
+        // 移动类部模态框事件
+        document.getElementById('confirm-move-category').addEventListener('click', executeMoveCategory);
+        document.getElementById('cancel-move-category').addEventListener('click', () => {
+            document.getElementById('move-category-modal').style.display = 'none';
+        });
+
+        // 移动膳品模态框事件
+        document.getElementById('confirm-move-item').addEventListener('click', executeMoveItem);
+        document.getElementById('cancel-move-item').addEventListener('click', () => {
+            document.getElementById('move-item-modal').style.display = 'none';
+        });
+
+        // 复制类部模态框事件
+        document.getElementById('confirm-copy-category').addEventListener('click', executeCopyCategory);
+        document.getElementById('cancel-copy-category').addEventListener('click', () => {
+            document.getElementById('copy-category-modal').style.display = 'none';
+        });
+
         // 模态框按钮
         setupModalEvents();
     }
@@ -920,7 +1002,7 @@
     function exportData(text) {
         try {
             navigator.clipboard.writeText(text);
-            alert('配置已复制到剪贴板');
+            alert('御方已复制到剪贴板');
         } catch (e) {
             alert('复制失败，请手动复制文本');
         }
@@ -1185,14 +1267,174 @@
 
     // 移动类部到其他方案
     function moveCategoryToPlan(planId, categoryId) {
-        // 实现略长，简化处理
-        alert('移动类部功能待实现');
+        const plan = state.plans.find(p => p.id === planId);
+        if (!plan) return;
+
+        const category = plan.categories.find(c => c.id === categoryId);
+        if (!category) return;
+
+        movingCategoryId = categoryId;
+        document.getElementById('moving-category-name').textContent = category.name;
+
+        // 填充目标方案列表
+        const targetPlanList = document.getElementById('target-plan-list');
+        targetPlanList.innerHTML = '';
+
+        state.plans.forEach(p => {
+            if (p.id !== planId) { // 不能移动到当前方案
+                const div = document.createElement('div');
+                div.className = 'target-option';
+                div.dataset.planId = p.id;
+                div.textContent = p.name;
+                div.addEventListener('click', function () {
+                    // 移除之前的选择
+                    document.querySelectorAll('#target-plan-list .target-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    // 选中当前项
+                    this.classList.add('selected');
+                    targetPlanId = this.dataset.planId;
+                });
+                targetPlanList.appendChild(div);
+            }
+        });
+
+        if (targetPlanList.children.length === 0) {
+            targetPlanList.innerHTML = '<div class="empty-state">启禀陛下，现无他方了</div>';
+        }
+
+        // 显示模态框
+        document.getElementById('move-category-modal').style.display = 'flex';
+        targetPlanId = null;
+    }
+
+    // 执行移动类部
+    function executeMoveCategory() {
+        if (!targetPlanId) {
+            alert('陛下明断，未选目标膳方');
+            return;
+        }
+
+        const sourcePlan = state.plans.find(p => p.categories.some(c => c.id === movingCategoryId));
+        const targetPlan = state.plans.find(p => p.id === targetPlanId);
+
+        if (!sourcePlan || !targetPlan) return;
+
+        const categoryIndex = sourcePlan.categories.findIndex(c => c.id === movingCategoryId);
+        if (categoryIndex === -1) return;
+
+        const category = sourcePlan.categories[categoryIndex];
+
+        // 检查目标方案中是否已有同名类部
+        if (targetPlan.categories.some(c => c.name === category.name)) {
+            alert('启禀陛下，目标膳方有此类部，请先赐名再移动');
+            return;
+        }
+
+        // 从源方案移除
+        sourcePlan.categories.splice(categoryIndex, 1);
+        // 添加到目标方案
+        targetPlan.categories.push(category);
+
+        // 保存状态
+        saveState();
+        saveStateToStack(sourcePlan.id);
+        saveStateToStack(targetPlan.id);
+
+        // 关闭模态框
+        document.getElementById('move-category-modal').style.display = 'none';
+
+        // 刷新界面
+        render();
     }
 
     // 复制类部到其他方案
     function copyCategoryToPlan(planId, categoryId) {
-        // 实现略长，简化处理
-        alert('复制类部功能待实现');
+        const plan = state.plans.find(p => p.id === planId);
+        if (!plan) return;
+
+        const category = plan.categories.find(c => c.id === categoryId);
+        if (!category) return;
+
+        copyingCategoryId = categoryId;
+        document.getElementById('copying-category-name').textContent = category.name;
+
+        // 填充目标方案列表
+        const targetPlanList = document.getElementById('target-copy-plan-list');
+        targetPlanList.innerHTML = '';
+
+        state.plans.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'target-option';
+            div.dataset.planId = p.id;
+            div.textContent = p.name;
+            div.addEventListener('click', function () {
+                // 移除之前的选择
+                document.querySelectorAll('#target-copy-plan-list .target-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // 选中当前项
+                this.classList.add('selected');
+                targetPlanId = this.dataset.planId;
+            });
+            targetPlanList.appendChild(div);
+        });
+
+        // 显示模态框
+        document.getElementById('copy-category-modal').style.display = 'flex';
+        targetPlanId = null;
+    }
+
+    // 执行复制类部
+    function executeCopyCategory() {
+        if (!targetPlanId) {
+            alert('陛下明断，未选目标膳方');
+            return;
+        }
+
+        const sourcePlan = state.plans.find(p => p.categories.some(c => c.id === copyingCategoryId));
+        const targetPlan = state.plans.find(p => p.id === targetPlanId);
+
+        if (!sourcePlan || !targetPlan) return;
+
+        const category = sourcePlan.categories.find(c => c.id === copyingCategoryId);
+        if (!category) return;
+
+        // 深拷贝类部
+        const copiedCategory = JSON.parse(JSON.stringify(category));
+        copiedCategory.id = generateId();
+
+        // 为所有膳品生成新ID
+        copiedCategory.items.forEach(item => {
+            item.id = generateId();
+        });
+
+        // 检查目标方案中是否已有同名类部
+        if (targetPlan.categories.some(c => c.name === copiedCategory.name)) {
+            // 添加后缀以保持名称唯一
+            let newName = `${copiedCategory.name} 拓入`;
+            let counter = 1;
+
+            while (targetPlan.categories.some(c => c.name === newName)) {
+                newName = `${copiedCategory.name} 拓入 ${counter}`;
+                counter++;
+            }
+
+            copiedCategory.name = newName;
+        }
+
+        // 添加到目标方案
+        targetPlan.categories.push(copiedCategory);
+
+        // 保存状态
+        saveState();
+        saveStateToStack(targetPlan.id);
+
+        // 关闭模态框
+        document.getElementById('copy-category-modal').style.display = 'none';
+
+        // 刷新界面
+        render();
     }
 
     // 请求删除类部
@@ -1322,8 +1564,113 @@
 
     // 移动膳品到其他类部
     function moveItemToCategory(planId, categoryId, itemId) {
-        // 实现略长，简化处理
-        alert('移动膳品功能待实现');
+        const plan = state.plans.find(p => p.id === planId);
+        if (!plan) return;
+
+        const sourceCategory = plan.categories.find(c => c.id === categoryId);
+        if (!sourceCategory) return;
+
+        const item = sourceCategory.items.find(i => i.id === itemId);
+        if (!item) return;
+
+        movingItemId = itemId;
+        document.getElementById('moving-item-name').textContent = item.name;
+
+        // 填充目标类部列表
+        const targetCategoryList = document.getElementById('target-category-list');
+        targetCategoryList.innerHTML = '';
+
+        state.plans.forEach(p => {
+            p.categories.forEach(c => {
+                // 不能移动到原类部
+                if (c.id !== categoryId) {
+                    const div = document.createElement('div');
+                    div.className = 'target-option';
+                    div.dataset.planId = p.id;
+                    div.dataset.categoryId = c.id;
+                    div.textContent = `${p.name} - ${c.name}`;
+                    div.addEventListener('click', function () {
+                        // 移除之前的选择
+                        document.querySelectorAll('#target-category-list .target-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        // 选中当前项
+                        this.classList.add('selected');
+                        targetPlanId = this.dataset.planId;
+                        targetCategoryId = this.dataset.categoryId;
+                    });
+                    targetCategoryList.appendChild(div);
+                }
+            });
+        });
+
+        if (targetCategoryList.children.length === 0) {
+            targetCategoryList.innerHTML = '<div class="empty-state">启禀陛下，现无他类</div>';
+        }
+
+        // 显示模态框
+        document.getElementById('move-item-modal').style.display = 'flex';
+        targetPlanId = null;
+        targetCategoryId = null;
+    }
+
+    // 执行移动膳品
+    function executeMoveItem() {
+        if (!targetPlanId || !targetCategoryId) {
+            alert('陛下明断，未选目标类部');
+            return;
+        }
+
+        // 查找源类部
+        let sourceCategory = null;
+        let sourcePlan = null;
+
+        for (const plan of state.plans) {
+            for (const category of plan.categories) {
+                if (category.items.some(i => i.id === movingItemId)) {
+                    sourceCategory = category;
+                    sourcePlan = plan;
+                    break;
+                }
+            }
+            if (sourceCategory) break;
+        }
+
+        if (!sourceCategory || !sourcePlan) return;
+
+        // 查找目标类部
+        const targetPlan = state.plans.find(p => p.id === targetPlanId);
+        if (!targetPlan) return;
+
+        const targetCategory = targetPlan.categories.find(c => c.id === targetCategoryId);
+        if (!targetCategory) return;
+
+        const itemIndex = sourceCategory.items.findIndex(i => i.id === movingItemId);
+        if (itemIndex === -1) return;
+
+        const item = sourceCategory.items[itemIndex];
+
+        // 检查目标类部中是否已有同名膳品
+        if (targetCategory.items.some(i => i.name === item.name)) {
+            alert('启禀陛下，目标类部有此膳品，请先赐名再移动');
+            return;
+        }
+
+        // 从源类部移除
+        sourceCategory.items.splice(itemIndex, 1);
+        // 添加到目标类部
+        targetCategory.items.push(item);
+
+        // 保存状态
+        saveState();
+        saveStateToStack(sourcePlan.id);
+        saveStateToStack(targetPlan.id);
+
+        // 关闭模态框
+        document.getElementById('move-item-modal').style.display = 'none';
+
+        // 刷新界面
+        render();
     }
 
     // 请求删除膳品
