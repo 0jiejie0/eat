@@ -1050,7 +1050,7 @@
         if (index !== -1) {
             state.plans.splice(index, 1);
 
-            // 如果删除的是当前方案，设置第一个方案为当前
+            // 如果删除的是当前方案，切换到前一个方案
             if (state.currentPlanId === planId) {
                 state.currentPlanId = state.plans.length > 0 ? state.plans[index === 0 ? 0 : index - 1].id : null;
             }
