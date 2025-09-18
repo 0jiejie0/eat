@@ -593,6 +593,72 @@
     let movingCategoryId = null;
     let movingItemId = null;
 
+    // 设定膳品模版
+    let noneDataItem = {id: 0, name: "膳品", weight: 100};
+    let defaultItem = noneDataItem;
+
+    // 设定类部模版
+    let noneDataCategory = {
+        id: 0,
+        name: "类部",
+        count: 1,
+        allowRepeat: false,
+        items: [defaultItem]
+    };
+    let defaultCategory = noneDataCategory;
+
+    // 设定几种方案模版，有数据、空数据、初始化方案、默认方案
+    let initDataPlan = {
+        id: 0,
+        name: `平静的晚膳`,
+        categories: [
+            {
+                id: 0,
+                name: "主食",
+                count: 1,
+                allowRepeat: false,
+                items: [
+                    {id: 0, name: "馒头", weight: 100}
+                ]
+            },
+            {
+                id: 0,
+                name: "配菜",
+                count: 1,
+                allowRepeat: false,
+                items: [
+                    {id: 0, name: "小鸡炖蘑菇", weight: 100}
+                ]
+            },
+            {
+                id: 0,
+                name: "点心",
+                count: 1,
+                allowRepeat: false,
+                items: [
+                    {id: 0, name: "橘子", weight: 100},
+                    {id: 0, name: "爆米花", weight: 100}
+                ]
+            },
+            {
+                id: 0,
+                name: "饮品",
+                count: 1,
+                allowRepeat: false,
+                items: [
+                    {id: 0, name: "小米粥", weight: 100}
+                ]
+            }
+        ]
+    };
+    let noneDataPlan = {
+        id: 0,
+        name: `用膳方案`,
+        categories: [defaultCategory]
+    };
+    let initPlans = [initDataPlan, initDataPlan]; // 初次打开程序使用的方案
+    let defaultPlan = initPlans[0]; // 新建方案使用的模版
+
     // 初始化函数
     function init() {
         loadData();
@@ -1010,56 +1076,12 @@
 
     // 添加新方案
     function addNewPlan() {
-        const planId = generateId();
-        const newPlan = {
-            id: planId,
-            name: `新用膳方案${state.plans.length + 1}`,
-            categories: [
-                {
-                    id: generateId(),
-                    name: "主食",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "馒头", weight: 100}
-                    ]
-                },
-                {
-                    id: generateId(),
-                    name: "配菜",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "小鸡炖蘑菇", weight: 100}
-                    ]
-                },
-                {
-                    id: generateId(),
-                    name: "点心",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "橘子", weight: 100},
-                        {id: generateId(), name: "爆米花", weight: 100}
-                    ]
-                },
-                {
-                    id: generateId(),
-                    name: "饮品",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "小米粥", weight: 100}
-                    ]
-                }
-            ]
-        };
+        const plan = copyPlanData(defaultPlan, state.plans.length)
+        state.plans.push(plan);
+        state.undoStacks[plan.id] = [];
+        state.redoStacks[plan.id] = [];
 
-        state.plans.push(newPlan);
-        state.undoStacks[planId] = [];
-        state.redoStacks[planId] = [];
-
-        setCurrentPlan(planId);
+        setCurrentPlan(plan.id);
         render();
         focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
     }
