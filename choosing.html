@@ -1028,7 +1028,7 @@
 
     // 添加新方案
     function addNewPlan() {
-        const plan = copyPlanData(defaultPlan, state.plans.length)
+        const plan = copyPlanData(defaultPlan, state.plans.length + 1)
         state.plans.push(plan);
         state.undoStacks[plan.id] = [];
         state.redoStacks[plan.id] = [];
@@ -1127,16 +1127,7 @@
     function addCategory(planId) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
-            const newCategory = {
-                id: generateId(),
-                name: `新类部 ${plan.categories.length + 1}`,
-                count: 1,
-                allowRepeat: false,
-                items: [
-                    {id: generateId(), name: "新膳品", weight: 100}
-                ]
-            };
-
+            const newCategory = copyCategoryData(defaultCategory, plan.categories.length + 1);
             saveStateToStack(planId);
             plan.categories.push(newCategory);
             saveState();
@@ -1390,9 +1381,10 @@
     }
 
     // 类部数据拷贝
-    function copyCategoryData(category) {
+    function copyCategoryData(category, namePostfix) {
         // 深拷贝类部
         const copiedCategory = JSON.parse(JSON.stringify(category));
+        copiedCategory.name = `${category.name}${namePostfix}`;
         regenerateCategoryId(copiedCategory);
         return copiedCategory;
     }
@@ -1432,11 +1424,9 @@
         if (plan) {
             const category = plan.categories.find(c => c.id === categoryId);
             if (category) {
-                const newItem = {
-                    id: generateId(),
-                    name: `新膳品 ${category.items.length + 1}`,
-                    weight: 100
-                };
+                const newItem = JSON.parse(JSON.stringify(defaultItem));
+                newItem.id = generateId();
+                newItem.name = `${defaultItem.name}${category.items.length + 1}`;
 
                 saveStateToStack(planId);
                 category.items.push(newItem);
