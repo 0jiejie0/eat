@@ -681,64 +681,16 @@
                 state.currentPlanId = data.currentPlanId;
             }
         } else {
-            // 初始默认数据
-            createDefaultPlan();
+            // localStorage无数据，初始化默认数据
+            initPlans.forEach(plan => {
+                plan = copyPlanData(plan)
+                state.plans.push(plan);
+                state.currentPlanId = plan.id;
+                state.undoStacks[plan.id] = [];
+                state.redoStacks[plan.id] = [];
+            })
+            saveState();
         }
-    }
-
-    // 创建默认方案
-    function createDefaultPlan() {
-        const planId = generateId();
-        const defaultPlan = {
-            id: planId,
-            name: "默认用膳方案",
-            categories: [
-                {
-                    id: generateId(),
-                    name: "主食",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "馒头", weight: 100}
-                    ]
-                },
-                {
-                    id: generateId(),
-                    name: "配菜",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "小鸡炖蘑菇", weight: 100}
-                    ]
-                },
-                {
-                    id: generateId(),
-                    name: "点心",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "橘子", weight: 100},
-                        {id: generateId(), name: "爆米花", weight: 100}
-                    ]
-                },
-                {
-                    id: generateId(),
-                    name: "饮品",
-                    count: 1,
-                    allowRepeat: false,
-                    items: [
-                        {id: generateId(), name: "小米粥", weight: 100}
-                    ]
-                }
-            ]
-        };
-
-        state.plans.push(defaultPlan);
-        state.currentPlanId = planId;
-        state.undoStacks[planId] = [];
-        state.redoStacks[planId] = [];
-
-        saveState();
     }
 
     // 保存数据到localStorage
