@@ -1094,29 +1094,26 @@
     function copyPlan(planId) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
-            const newPlanId = generateId();
-            // 深拷贝方案
-            const copiedPlan = JSON.parse(JSON.stringify(plan));
-            copiedPlan.id = newPlanId;
-            copiedPlan.name = `${plan.name}新`;
-
-            // 为所有子元素生成新ID
-            copiedPlan.categories.forEach(category => {
-                category.id = generateId();
-                category.items.forEach(item => {
-                    item.id = generateId();
-                });
-            });
-
+            const copiedPlan = copyPlanData(plan, '新');
             state.plans.push(copiedPlan);
-            state.undoStacks[newPlanId] = [];
-            state.redoStacks[newPlanId] = [];
-
+            state.undoStacks[copiedPlan.id] = [];
+            state.redoStacks[copiedPlan.id] = [];
             saveState();
             render();
-            changeCurrentPlan(newPlanId);
+            changeCurrentPlan(copiedPlan.id);
             focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
         }
+    }
+
+    // 方案数据拷贝
+    function copyPlanData(plan, namePostfix) {
+        // 深拷贝
+        const copiedPlan = JSON.parse(JSON.stringify(plan));
+        copiedPlan.id = generateId();
+        copiedPlan.name = `${plan.name}${namePostfix}`;
+        // 为所有子类部生成新ID
+        copiedPlan.categories.forEach(regenerateCategoryId);
+        return copiedPlan;
     }
 
     // 请求删除方案
@@ -1265,7 +1262,7 @@
         }
     }
 
-    // 移动类部到其他方案
+    // 移动类部到其他方案的弹窗
     function moveCategoryToPlan(planId, categoryId) {
         const plan = state.plans.find(p => p.id === planId);
         if (!plan) return;
@@ -1348,7 +1345,7 @@
         render();
     }
 
-    // 复制类部到其他方案
+    // 复制类部到其他方案的弹窗
     function copyCategoryToPlan(planId, categoryId) {
         const plan = state.plans.find(p => p.id === planId);
         if (!plan) return;
@@ -1400,14 +1397,8 @@
         const category = sourcePlan.categories.find(c => c.id === copyingCategoryId);
         if (!category) return;
 
-        // 深拷贝类部
-        const copiedCategory = JSON.parse(JSON.stringify(category));
-        copiedCategory.id = generateId();
-
-        // 为所有膳品生成新ID
-        copiedCategory.items.forEach(item => {
-            item.id = generateId();
-        });
+        // 深拷贝类部，且重新生成ID
+        const copiedCategory = copyCategoryData(category);
 
         // 检查目标方案中是否已有同名类部
         if (targetPlan.categories.some(c => c.name === copiedCategory.name)) {
@@ -1435,6 +1426,22 @@
 
         // 刷新界面
         render();
+    }
+
+    // 类部数据拷贝
+    function copyCategoryData(category) {
+        // 深拷贝类部
+        const copiedCategory = JSON.parse(JSON.stringify(category));
+        regenerateCategoryId(copiedCategory);
+        return copiedCategory;
+    }
+
+    // 类部及其内膳品重新生成ID
+    function regenerateCategoryId(category) {
+        category.id = generateId();
+        category.items.forEach(item => {
+            item.id = generateId();
+        });
     }
 
     // 请求删除类部
@@ -1562,7 +1569,7 @@
         }
     }
 
-    // 移动膳品到其他类部
+    // 移动膳品到其他类部的弹窗
     function moveItemToCategory(planId, categoryId, itemId) {
         const plan = state.plans.find(p => p.id === planId);
         if (!plan) return;
