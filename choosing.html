@@ -1059,30 +1059,30 @@
         state.undoStacks[planId] = [];
         state.redoStacks[planId] = [];
 
-        saveState();
+        setCurrentPlan(planId);
         render();
-        changeCurrentPlan(planId);
         focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
     }
 
     // 重命名方案
     function renamePlan(planId, newName) {
-        if (!newName.trim()) {
+        newName = newName.trim();
+        if (!newName) {
             alert('请陛下为膳方赐名');
             render();
             return;
         }
 
         // 检查名称是否已存在
-        if (state.plans.some(p => p.id !== planId && p.name === newName)) {
+        if (state.plans.some(p => p.name === newName)) {
             alert('陛下神机妙算，这道膳方已经有了');
-            render();
+            // render();
             return;
         }
 
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
-            saveStateToStack(planId);
+            // saveStateToStack(planId);  方案名改动入栈会导致重名
             plan.name = newName;
             saveState();
             renderPlanSelector();
@@ -1098,9 +1098,8 @@
             state.plans.push(copiedPlan);
             state.undoStacks[copiedPlan.id] = [];
             state.redoStacks[copiedPlan.id] = [];
-            saveState();
+            setCurrentPlan(copiedPlan.id)
             render();
-            changeCurrentPlan(copiedPlan.id);
             focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
         }
     }
@@ -1143,19 +1142,6 @@
         }
     }
 
-    // 本想通过触发下拉框change事件切换方案
-    function changeCurrentPlan(planId) {
-        const planSelect = document.getElementById('plan-select');
-        const options = planSelect.options;
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].value === planId) {
-                planSelect.selectedIndex = i;
-                setCurrentPlan(planId); // 触发不动，手动调用
-                break;
-            }
-        }
-    }
-
     // 设置当前方案
     function setCurrentPlan(planId) {
         state.currentPlanId = planId;
@@ -1187,8 +1173,9 @@
 
     // 重命名类部
     function renameCategory(planId, categoryId, newName) {
-        if (!newName.trim()) {
-            alert('请陛下为本类部赐名！');
+        newName = newName.trim();
+        if (!newName) {
+            alert('奏请陛下为类部赐名！');
             renderPlanDetails();
             return;
         }
@@ -1198,9 +1185,9 @@
             const category = plan.categories.find(c => c.id === categoryId);
             if (category) {
                 // 检查名称是否已存在
-                if (plan.categories.some(c => c.id !== categoryId && c.name === newName)) {
+                if (plan.categories.some(c => c.name === newName)) {
                     alert('回陛下，这个类部已经有了');
-                    renderPlanDetails();
+                    // renderPlanDetails();
                     return;
                 }
 
@@ -1497,8 +1484,9 @@
 
     // 重命名膳品
     function renameItem(planId, categoryId, itemId, newName) {
-        if (!newName.trim()) {
-            alert('请为膳品赐名');
+        newName = newName.trim();
+        if (!newName) {
+            alert('奏请陛下为膳品赐名');
             renderPlanDetails();
             return;
         }
@@ -1510,9 +1498,9 @@
                 const item = category.items.find(i => i.id === itemId);
                 if (item) {
                     // 检查名称是否已存在
-                    if (category.items.some(i => i.id !== itemId && i.name === newName)) {
-                        alert('回陛下，这个膳品已经有了');
-                        renderPlanDetails();
+                    if (category.items.some(i => i.name === newName)) {
+                        alert('回陛下，这膳品已经有了');
+                        // renderPlanDetails();
                         return;
                     }
 
@@ -1740,6 +1728,7 @@
                 const previousState = state.undoStacks[planId].pop();
                 const index = state.plans.findIndex(p => p.id === planId);
                 state.plans[index] = previousState;
+                previousState.name = plan.name; // 方案名保持当前状态
 
                 saveState();
                 renderPlanSelector();
@@ -1763,6 +1752,7 @@
                 const nextState = state.redoStacks[planId].pop();
                 const index = state.plans.findIndex(p => p.id === planId);
                 state.plans[index] = nextState;
+                nextState.name = plan.name; // 方案名保持当前状态
 
                 saveState();
                 renderPlanSelector();
