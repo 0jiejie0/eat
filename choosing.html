@@ -682,6 +682,11 @@
             }
         } else {
             // localStorage无数据，初始化默认数据
+            state.currentPlanId = null;
+            state.plans = [];
+            state.history = [];
+            state.redoStacks = {};
+            state.undoStacks = {};
             initPlans.forEach(plan => {
                 plan = copyPlanData(plan)
                 state.plans.push(plan);
@@ -971,9 +976,9 @@
         const action = document.getElementById('import-export-modal').dataset.action;
         const text = document.getElementById('ie-textarea').value;
 
-        if (action === 'importData') {
+        if (action === importData.name) {
             importData(text);
-        } else if (action === 'exportData') {
+        } else if (action === exportData.name) {
             exportData(text);
         }
 
@@ -982,25 +987,54 @@
 
     // 导入数据
     function importData(text) {
+        if (!text) {
+            // 重置
+            const y = confirm('确认清除包括膳方、膳注在内的所有膳方，并重新初始化吗？');
+            if (y) {
+                localStorage.removeItem('mealSelectorData');
+                init();
+                alert('启禀陛下，重置完成');
+            } else {
+                alert('皇上圣明');
+            }
+            return;
+        }
         try {
             const data = JSON.parse(text);
             // 验证数据格式
             if (data.plans && Array.isArray(data.plans)) {
-                state.plans = data.plans;
-                state.history = data.history || [];
-                state.undoStacks = data.undoStacks || {};
-                state.redoStacks = data.redoStacks || {};
-
-                if (state.plans.length > 0) {
-                    state.currentPlanId = state.plans[0].id;
+                const y = confirm('新御方数据包含膳方，确定导入并覆盖本机所有膳方吗？');
+                if (y) {
+                    state.plans = data.plans;
+                    // 撤销重做栈不能分开导入，且必须和膳方同时导入
+                    let yy = false;
+                    if (data.undoStacks && data.redoStacks) {
+                        yy = confirm('新御方数据还包含撤销重做记录，是否同时导入？')
+                    }
+                    if (yy) {
+                        state.undoStacks = data.undoStacks;
+                        state.redoStacks = data.redoStacks;
+                    } else {
+                        state.undoStacks = {};
+                        state.redoStacks = {};
+                    }
                 }
-
-                saveState();
-                render();
-                alert('导入成功！');
-            } else {
-                alert('导入失败：数据格式不正确');
             }
+            if (data.history && Array.isArray(data.history)) {
+                const y = confirm('新御方数据包含膳注，确定导入并覆盖本机所有膳注吗？');
+                if (y) {
+                    state.history = data.history;
+                }
+            }
+            if (data.currentPlanId) {
+                state.currentPlanId = data.currentPlanId;
+            } else if (state.plans.length > 0) {
+                state.currentPlanId = state.plans[0].id;
+            }
+
+            saveState();
+            render();
+            alert('导入成功！');
         } catch (e) {
             alert('导入失败：无效的JSON格式');
         }
@@ -1009,6 +1043,7 @@
     // 准备导出数据
     function prepareExportData() {
         return {
+            currentPlanId: state.currentPlanId,
             plans: state.plans,
             history: state.history,
             undoStacks: state.undoStacks,
@@ -1079,7 +1114,7 @@
     }
 
     // 方案数据拷贝
-    function copyPlanData(plan, namePostfix) {
+    function copyPlanData(plan, namePostfix = '') {
         // 深拷贝
         const copiedPlan = JSON.parse(JSON.stringify(plan));
         copiedPlan.id = generateId();
@@ -1381,7 +1416,7 @@
     }
 
     // 类部数据拷贝
-    function copyCategoryData(category, namePostfix) {
+    function copyCategoryData(category, namePostfix = '') {
         // 深拷贝类部
         const copiedCategory = JSON.parse(JSON.stringify(category));
         copiedCategory.name = `${category.name}${namePostfix}`;
