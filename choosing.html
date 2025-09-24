@@ -524,7 +524,7 @@
 <div id="copy-category-modal" class="modal">
     <div class="modal-content">
         <h2>奉天承运，皇帝诏曰</h2>
-        <p>将类部 "<span id="copying-category-name"></span>" 即刻拓印到:</p>
+        <p>将类部 "<span id="copying-category-name"></span>" 即刻抄送到:</p>
         <div id="target-copy-plan-list" style="margin: 15px 0;"></div>
         <div class="modal-buttons">
             <button id="confirm-copy-category">君无戏言</button>
@@ -789,7 +789,7 @@
                             </div>
                             <div>
                                 <button onclick="moveCategoryToPlan('${plan.id}', '${category.id}')">移</button>
-                                <button onclick="copyCategoryToPlan('${plan.id}', '${category.id}')">拓</button>
+                                <button onclick="copyCategoryToPlan('${plan.id}', '${category.id}')">抄</button>
                                 <button onclick="requestDeleteCategory('${plan.id}', '${category.id}')" class="danger">×</button>
                             </div>
                         </div>
@@ -1336,17 +1336,14 @@
     function copyCategoryToPlan(planId, categoryId) {
         const plan = state.plans.find(p => p.id === planId);
         if (!plan) return;
-
         const category = plan.categories.find(c => c.id === categoryId);
         if (!category) return;
-
         copyingCategoryId = categoryId;
         document.getElementById('copying-category-name').textContent = category.name;
 
         // 填充目标方案列表
         const targetPlanList = document.getElementById('target-copy-plan-list');
         targetPlanList.innerHTML = '';
-
         state.plans.forEach(p => {
             const div = document.createElement('div');
             div.className = 'target-option';
@@ -1375,42 +1372,33 @@
             alert('陛下明断，未选目标膳方');
             return;
         }
-
         const sourcePlan = state.plans.find(p => p.categories.some(c => c.id === copyingCategoryId));
         const targetPlan = state.plans.find(p => p.id === targetPlanId);
-
         if (!sourcePlan || !targetPlan) return;
-
         const category = sourcePlan.categories.find(c => c.id === copyingCategoryId);
         if (!category) return;
 
         // 深拷贝类部，且重新生成ID
-        const copiedCategory = copyCategoryData(category);
+        const copiedCategory = copyCategoryData(category, ` 抄${sourcePlan.name}`);
 
         // 检查目标方案中是否已有同名类部
         if (targetPlan.categories.some(c => c.name === copiedCategory.name)) {
             // 添加后缀以保持名称唯一
-            let newName = `${copiedCategory.name} 拓入`;
             let counter = 1;
-
-            while (targetPlan.categories.some(c => c.name === newName)) {
-                newName = `${copiedCategory.name} 拓入 ${counter}`;
+            while (targetPlan.categories.some(c => c.name === `${copiedCategory.name} ${counter}`)) {
                 counter++;
             }
-
-            copiedCategory.name = newName;
+            copiedCategory.name = `${copiedCategory.name} ${counter}`;
         }
 
-        // 添加到目标方案
+        // 添加到目标方案，操作栈保存
+        saveStateToStack(targetPlan.id);
         targetPlan.categories.push(copiedCategory);
 
         // 保存状态
         saveState();
-        saveStateToStack(targetPlan.id);
-
         // 关闭模态框
         document.getElementById('copy-category-modal').style.display = 'none';
-
         // 刷新界面
         render();
     }
