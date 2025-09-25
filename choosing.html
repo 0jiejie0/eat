@@ -1399,8 +1399,10 @@
         saveState();
         // 关闭模态框
         document.getElementById('copy-category-modal').style.display = 'none';
-        // 刷新界面
+        // 切换到目标方案并聚焦到新复制类目
+        setCurrentPlan(targetPlanId);
         render();
+        focusOn(`#categories-${targetPlanId} > div:nth-child(${targetPlan.categories.length}) > div.category-header > input`);
     }
 
     // 类部数据拷贝
