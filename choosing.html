@@ -1063,7 +1063,7 @@
 
     // 添加新方案
     function addNewPlan() {
-        const plan = copyPlanData(defaultPlan, state.plans.length + 1)
+        const plan = copyPlanData(defaultPlan, '新')
         state.plans.push(plan);
         state.undoStacks[plan.id] = [];
         state.redoStacks[plan.id] = [];
@@ -1114,11 +1114,19 @@
     }
 
     // 方案数据拷贝
-    function copyPlanData(plan, namePostfix = '') {
+    function copyPlanData(plan, namePostfix = '', plans = state.plans) {
         // 深拷贝
         const copiedPlan = JSON.parse(JSON.stringify(plan));
         copiedPlan.id = generateId();
         copiedPlan.name = `${plan.name}${namePostfix}`;
+        // 方案名称判重
+        if (plans.some(p => p.name === copiedPlan.name)) {
+            let counter = 1;
+            while (plans.some(p => p.name === `${copiedPlan.name} ${counter}`)) {
+                counter++;
+            }
+            copiedPlan.name = `${copiedPlan.name} ${counter}`;
+        }
         // 为所有子类部生成新ID
         copiedPlan.categories.forEach(regenerateCategoryId);
         return copiedPlan;
@@ -1162,7 +1170,7 @@
     function addCategory(planId) {
         const plan = state.plans.find(p => p.id === planId);
         if (plan) {
-            const newCategory = copyCategoryData(defaultCategory, plan.categories.length + 1);
+            const newCategory = copyCategoryData(defaultCategory, '新', plan.categories);
             saveStateToStack(planId);
             plan.categories.push(newCategory);
             saveState();
@@ -1379,17 +1387,7 @@
         if (!category) return;
 
         // 深拷贝类部，且重新生成ID
-        const copiedCategory = copyCategoryData(category, ` 抄${sourcePlan.name}`);
-
-        // 检查目标方案中是否已有同名类部
-        if (targetPlan.categories.some(c => c.name === copiedCategory.name)) {
-            // 添加后缀以保持名称唯一
-            let counter = 1;
-            while (targetPlan.categories.some(c => c.name === `${copiedCategory.name} ${counter}`)) {
-                counter++;
-            }
-            copiedCategory.name = `${copiedCategory.name} ${counter}`;
-        }
+        const copiedCategory = copyCategoryData(category, ` 抄${sourcePlan.name}`, targetPlan.categories);
 
         // 添加到目标方案，操作栈保存
         saveStateToStack(targetPlan.id);
@@ -1406,10 +1404,19 @@
     }
 
     // 类部数据拷贝
-    function copyCategoryData(category, namePostfix = '') {
+    function copyCategoryData(category, namePostfix = '', categories = []) {
         // 深拷贝类部
         const copiedCategory = JSON.parse(JSON.stringify(category));
         copiedCategory.name = `${category.name}${namePostfix}`;
+        // 检查目标方案中是否已有同名类部
+        if (categories.some(c => c.name === copiedCategory.name)) {
+            // 添加后缀以保持名称唯一
+            let counter = 1;
+            while (categories.some(c => c.name === `${copiedCategory.name} ${counter}`)) {
+                counter++;
+            }
+            copiedCategory.name = `${copiedCategory.name} ${counter}`;
+        }
         regenerateCategoryId(copiedCategory);
         return copiedCategory;
     }
