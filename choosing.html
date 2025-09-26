@@ -1261,17 +1261,14 @@
     function moveCategoryToPlan(planId, categoryId) {
         const plan = state.plans.find(p => p.id === planId);
         if (!plan) return;
-
         const category = plan.categories.find(c => c.id === categoryId);
         if (!category) return;
-
         movingCategoryId = categoryId;
         document.getElementById('moving-category-name').textContent = category.name;
 
         // 填充目标方案列表
         const targetPlanList = document.getElementById('target-plan-list');
         targetPlanList.innerHTML = '';
-
         state.plans.forEach(p => {
             if (p.id !== planId) { // 不能移动到当前方案
                 const div = document.createElement('div');
@@ -1290,7 +1287,6 @@
                 targetPlanList.appendChild(div);
             }
         });
-
         if (targetPlanList.children.length === 0) {
             targetPlanList.innerHTML = '<div class="empty-state">启禀陛下，现无他方了</div>';
         }
@@ -1306,38 +1302,42 @@
             alert('陛下明断，未选目标膳方');
             return;
         }
-
-        const sourcePlan = state.plans.find(p => p.categories.some(c => c.id === movingCategoryId));
+        const sourcePlan = state.plans.find(p => p.id === state.currentPlanId);
         const targetPlan = state.plans.find(p => p.id === targetPlanId);
-
         if (!sourcePlan || !targetPlan) return;
-
         const categoryIndex = sourcePlan.categories.findIndex(c => c.id === movingCategoryId);
         if (categoryIndex === -1) return;
-
         const category = sourcePlan.categories[categoryIndex];
 
-        // 检查目标方案中是否已有同名类部
-        if (targetPlan.categories.some(c => c.name === category.name)) {
-            alert('启禀陛下，目标膳方有此类部，请先赐名再移动');
-            return;
+        saveStateToStack(sourcePlan.id);
+        saveStateToStack(targetPlan.id);
+
+        // 由于撤销重做在两个膳方间不同步，源方撤销移动后再次向目标方移动，可能导致id重复
+        regenerateCategoryId(category);
+        category.name = `${category.name} 移自${sourcePlan.name}`;
+        // 目标方案中类部名称判重
+        if (targetPlan.categories.some(c => c.name === `${category.name}`)) {
+            // 添加后缀以保持名称唯一
+            let counter = 1;
+            while (targetPlan.categories.some(c => c.name === `${category.name} ${counter}`)) {
+                counter++;
+            }
+            category.name = `${category.name} ${counter}`;
         }
 
         // 从源方案移除
         sourcePlan.categories.splice(categoryIndex, 1);
         // 添加到目标方案
         targetPlan.categories.push(category);
-
         // 保存状态
         saveState();
-        saveStateToStack(sourcePlan.id);
-        saveStateToStack(targetPlan.id);
 
         // 关闭模态框
         document.getElementById('move-category-modal').style.display = 'none';
-
-        // 刷新界面
+        // 切换膳方和焦点，刷新界面
+        setCurrentPlan(targetPlanId);
         render();
+        focusOn(`#categories-${targetPlanId} > div:nth-child(${targetPlan.categories.length}) > div.category-header > input`);
     }
 
     // 复制类部到其他方案的弹窗
@@ -1387,7 +1387,7 @@
         if (!category) return;
 
         // 深拷贝类部，且重新生成ID
-        const copiedCategory = copyCategoryData(category, ` 抄${sourcePlan.name}`, targetPlan.categories);
+        const copiedCategory = copyCategoryData(category, ` 抄自${sourcePlan.name}`, targetPlan.categories);
 
         // 添加到目标方案，操作栈保存
         saveStateToStack(targetPlan.id);
