@@ -610,7 +610,7 @@
     // 设定几种方案模版，有数据、空数据、初始化方案、默认方案
     let initDataPlan = {
         id: 0,
-        name: `平静的晚膳`,
+        name: `粗茶淡饭`,
         categories: [
             {
                 id: 0,
@@ -651,12 +651,342 @@
             }
         ]
     };
+    let morningDataPlan =
+        {
+            "id": 0,
+            "name": "平静的早膳",
+            "categories": [
+                {
+                    "id": 0,
+                    "name": "主食",
+                    "count": 2,
+                    "allowRepeat": true,
+                    "items": [
+                        {
+                            "id": 0,
+                            "name": "大蒸包",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "小笼包",
+                            "weight": 100
+                        }
+                    ]
+                },
+                {
+                    "id": 0,
+                    "name": "配菜",
+                    "count": 1,
+                    "allowRepeat": false,
+                    "items": [
+                        {
+                            "id": 0,
+                            "name": "榨菜",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "老干妈",
+                            "weight": 100
+                        }
+                    ]
+                },
+                {
+                    "id": 0,
+                    "name": "点心",
+                    "count": 1,
+                    "allowRepeat": false,
+                    "items": [
+                        {
+                            "id": 0,
+                            "name": "鸡蛋",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "苹果",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "香蕉",
+                            "weight": 100
+                        }
+                    ]
+                },
+                {
+                    "id": 0,
+                    "name": "饮品",
+                    "count": 1,
+                    "allowRepeat": false,
+                    "items": [
+                        {
+                            "id": 0,
+                            "name": "小米粥",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "皮蛋粥",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "牛奶",
+                            "weight": 100
+                        },
+                        {
+                            "id": 0,
+                            "name": "鸡蛋汤",
+                            "weight": 100
+                        }
+                    ]
+                }
+            ]
+        };
+    let noonDataPlan = {
+        "id": 0,
+        "name": "午膳龙颜不悦胡吃海喝",
+        "categories": [
+            {
+                "id": 0,
+                "name": "主食",
+                "count": 4,
+                "allowRepeat": false,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "人参",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "鲍鱼",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "鹿茸",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "熊掌",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "熊心",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "豹胆",
+                        "weight": 100
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "配菜",
+                "count": 2,
+                "allowRepeat": true,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "小米椒",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "朝天椒",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "大葱",
+                        "weight": 100
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "点心",
+                "count": 1,
+                "allowRepeat": false,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "蛋糕",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "冰淇淋",
+                        "weight": 100
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "饮品",
+                "count": 2,
+                "allowRepeat": true,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "鱼翅",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "王八汤",
+                        "weight": 100
+                    }
+                ]
+            }
+        ]
+    };
+    let dinnerDataPlan = {
+        "id": 0,
+        "name": "晚膳龙颜大喜厚宴八方",
+        "categories": [
+            {
+                "id": 0,
+                "name": "主食",
+                "count": 4,
+                "allowRepeat": true,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "馒头",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "煎饼",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "米饭",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "烧饼",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "大包",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "油条",
+                        "weight": 100
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "配菜",
+                "count": 2,
+                "allowRepeat": false,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "小鸡炖蘑菇",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "人参炖萝卜",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "大锅炖",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "小锅炒",
+                        "weight": 100
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "点心",
+                "count": 2,
+                "allowRepeat": false,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "橘子",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "爆米花",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "薄荷糖",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "冰淇淋",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "西瓜",
+                        "weight": 100
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "饮品",
+                "count": 2,
+                "allowRepeat": true,
+                "items": [
+                    {
+                        "id": 0,
+                        "name": "82拉菲",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "泸州老窖",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "飞天茅台",
+                        "weight": 100
+                    },
+                    {
+                        "id": 0,
+                        "name": "青岛纯生",
+                        "weight": 100
+                    }
+                ]
+            }
+        ]
+    };
     let noneDataPlan = {
         id: 0,
         name: `用膳方案`,
         categories: [defaultCategory]
     };
-    let initPlans = [initDataPlan, initDataPlan]; // 初次打开程序使用的方案
+    let initPlans = [initDataPlan, morningDataPlan, noonDataPlan, dinnerDataPlan, initDataPlan]; // 初次打开程序使用的方案
     let defaultPlan = initPlans[0]; // 新建方案使用的模版
 
     // 初始化函数
