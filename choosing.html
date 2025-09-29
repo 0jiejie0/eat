@@ -501,7 +501,7 @@
         <p>将类部 "<span id="moving-category-name"></span>" 即刻移动到:</p>
         <div id="target-plan-list" style="margin: 15px 0;"></div>
         <div class="modal-buttons">
-            <button id="confirm-move-category">君无戏言</button>
+<!--            <button id="confirm-move-category">钦此</button>-->
             <button id="cancel-move-category" class="secondary">适才相戏耳</button>
         </div>
     </div>
@@ -514,7 +514,7 @@
         <p>将膳品 "<span id="moving-item-name"></span>" 即刻移动到:</p>
         <div id="target-category-list" style="margin: 15px 0;"></div>
         <div class="modal-buttons">
-            <button id="confirm-move-item">君无戏言</button>
+<!--            <button id="confirm-move-item">钦此</button>-->
             <button id="cancel-move-item" class="secondary">适才相戏耳</button>
         </div>
     </div>
@@ -527,7 +527,7 @@
         <p>将类部 "<span id="copying-category-name"></span>" 即刻抄送到:</p>
         <div id="target-copy-plan-list" style="margin: 15px 0;"></div>
         <div class="modal-buttons">
-            <button id="confirm-copy-category">君无戏言</button>
+<!--            <button id="confirm-copy-category">钦此</button>-->
             <button id="cancel-copy-category" class="secondary">适才相戏耳</button>
         </div>
     </div>
@@ -907,19 +907,19 @@
         document.getElementById('clear-history').addEventListener('click', requestClearHistory);
 
         // 移动类部模态框事件
-        document.getElementById('confirm-move-category').addEventListener('click', executeMoveCategory);
+        // document.getElementById('confirm-move-category').addEventListener('click', executeMoveCategory);
         document.getElementById('cancel-move-category').addEventListener('click', () => {
             document.getElementById('move-category-modal').style.display = 'none';
         });
 
         // 移动膳品模态框事件
-        document.getElementById('confirm-move-item').addEventListener('click', executeMoveItem);
+        // document.getElementById('confirm-move-item').addEventListener('click', executeMoveItem);
         document.getElementById('cancel-move-item').addEventListener('click', () => {
             document.getElementById('move-item-modal').style.display = 'none';
         });
 
         // 复制类部模态框事件
-        document.getElementById('confirm-copy-category').addEventListener('click', executeCopyCategory);
+        // document.getElementById('confirm-copy-category').addEventListener('click', executeCopyCategory);
         document.getElementById('cancel-copy-category').addEventListener('click', () => {
             document.getElementById('copy-category-modal').style.display = 'none';
         });
@@ -1283,6 +1283,8 @@
                     // 选中当前项
                     this.classList.add('selected');
                     targetPlanId = this.dataset.planId;
+                    executeMoveCategory();
+                    document.getElementById('move-category-modal').style.display = 'none';
                 });
                 targetPlanList.appendChild(div);
             }
@@ -1365,6 +1367,8 @@
                 // 选中当前项
                 this.classList.add('selected');
                 targetPlanId = this.dataset.planId;
+                executeCopyCategory();
+                document.getElementById('copy-category-modal').style.display = 'none';
             });
             targetPlanList.appendChild(div);
         });
@@ -1587,6 +1591,8 @@
                         this.classList.add('selected');
                         targetPlanId = this.dataset.planId;
                         targetCategoryId = this.dataset.categoryId;
+                        executeMoveItem();
+                        document.getElementById('move-item-modal').style.display = 'none';
                     });
                     targetCategoryList.appendChild(div);
                 }
