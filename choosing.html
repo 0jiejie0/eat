@@ -533,6 +533,14 @@
     </div>
 </div>
 
+<!-- 消息提示模态框 -->
+<div id="message-modal" class="modal">
+    <div class="modal-content">
+        <h2>吾皇万岁</h2>
+        <p>奏请皇上为新<span id="message-content"></span>赐名！</p>
+    </div>
+</div>
+
 <!-- 备注模态框 -->
 <div id="note-modal" class="modal">
     <div class="modal-content">
@@ -1391,6 +1399,15 @@
         }
     }
 
+    // 消息提示
+    function showTip(message, time = 2) {
+        document.getElementById('message-content').textContent = message;
+        document.getElementById('message-modal').style.display = 'flex';
+        setTimeout(function() {
+            document.getElementById('message-modal').style.display = 'none';
+        }, time * 1000);
+    }
+
     // 添加新方案
     function addNewPlan() {
         const plan = copyPlanData(defaultPlan, '新')
@@ -1400,6 +1417,7 @@
 
         setCurrentPlan(plan.id);
         render();
+        showTip("膳方");
         focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
     }
 
@@ -1439,6 +1457,7 @@
             state.redoStacks[copiedPlan.id] = [];
             setCurrentPlan(copiedPlan.id)
             render();
+            showTip("膳方");
             focusOn(`#plan-details > div > div:nth-child(1) > h3 > input`);
         }
     }
@@ -1505,6 +1524,7 @@
             plan.categories.push(newCategory);
             saveState();
             renderPlanDetails();
+            showTip("类部", 1);
             focusOn(`#categories-${plan.id} > div:nth-child(${plan.categories.length}) > div.category-header > input`);
         }
     }
@@ -1669,6 +1689,7 @@
         // 切换膳方和焦点，刷新界面
         setCurrentPlan(targetPlanId);
         render();
+        showTip("类部", 1);
         focusOn(`#categories-${targetPlanId} > div:nth-child(${targetPlan.categories.length}) > div.category-header > input`);
     }
 
@@ -1734,6 +1755,7 @@
         // 切换到目标方案并聚焦到新复制类目
         setCurrentPlan(targetPlanId);
         render();
+        showTip("类部", 1);
         focusOn(`#categories-${targetPlanId} > div:nth-child(${targetPlan.categories.length}) > div.category-header > input`);
     }
 
