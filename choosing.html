@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>御膳翻牌器 - 恭请圣安</title>
+    <title>御膳翻牌器 - 吃穿不愁，用度无忧</title>
     <style>
         :root {
             --gold-primary: #d4af37;
@@ -445,7 +445,9 @@
 
     <!--    <div class="add-button-container">-->
     <!--    </div>-->
-    <div></div>
+    <div class="plan-selector" id="tip-click">
+        <label for="plan-select">&nbsp;&nbsp;请在下方完善备选项，然后点击上方的『翻牌子』按钮。（翻牌100次后，本提示自动消失）</label>
+    </div>
 
     <div class="plan-selector"
          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap;text-align: right">
@@ -582,6 +584,7 @@
 <script>
     // 数据结构定义
     let state = {
+        drewCount: 0, // 翻牌子次数
         plans: [],
         currentPlanId: null,
         history: [],
@@ -1009,6 +1012,7 @@
         const saved = localStorage.getItem('mealSelectorData');
         if (saved) {
             const data = JSON.parse(saved);
+            state.drewCount = data.drewCount || 0;
             state.plans = data.plans || [];
             state.history = data.history || [];
             state.undoStacks = data.undoStacks || {};
@@ -1020,6 +1024,7 @@
             }
         } else {
             // localStorage无数据，初始化默认数据
+            state.drewCount = 0;
             state.currentPlanId = null;
             state.plans = [];
             state.history = [];
@@ -1065,6 +1070,11 @@
     // 渲染方案详情
     function renderPlanDetails() {
         const planDetails = document.getElementById('plan-details');
+        if (state.drewCount > 99) {
+            document.getElementById('tip-click').style.display = 'none';
+        } else {
+            document.getElementById('tip-click').style.display = 'flex';
+        }
 
         if (!state.currentPlanId || state.plans.length === 0) {
             planDetails.innerHTML = '<div class="empty-state">请选择或创建膳方</div>';
@@ -2215,6 +2225,7 @@
 
     // 添加到历史记录
     function addToHistory(results, note) {
+        state.drewCount++;
         state.history.push({
             id: generateId(),
             planId: currentPlanForResults.id,
