@@ -1197,8 +1197,8 @@
             return;
         }
 
-        // 只显示最近10条记录
-        const recentHistory = state.history.slice(-10).reverse();
+        // 只显示最近50条记录
+        const recentHistory = state.history.slice(-50).reverse();
 
         historyList.innerHTML = '';
         recentHistory.forEach(record => {
