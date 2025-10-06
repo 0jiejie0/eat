@@ -2126,33 +2126,28 @@
         // 对每个类部进行随机选择
         for (const category of plan.categories) {
             if (category.count === 0) continue; // 不选择
-
             // 检查不可重复时选择数量是否超过膳品种类
             if (!category.allowRepeat && category.count > category.items.length) {
                 isValid = false;
                 errorMessage = `陛下，类部"${category.name}"中的膳品不够了，膳品数(${category.items.length})比您要的不重复份数(${category.count})少`;
                 break;
             }
-
             // 计算总权重
             const totalWeight = category.items.reduce((sum, item) => sum + item.weight, 0);
             if (totalWeight <= 0) {
                 isValid = false;
-                errorMessage = `陛下，类部"${category.name}"中没有有效权重的膳品`;
+                errorMessage = `陛下，类部"${category.name}"中的膳品权重无效`;
                 break;
             }
 
             // 选择膳品
             const selectedItems = [];
             const availableItems = [...category.items]; // 可用膳品列表（用于不可重复的情况）
-
             for (let i = 0; i < category.count; i++) {
                 if (availableItems.length === 0) break;
-
                 // 随机选择
                 let random = Math.random() * totalWeight;
                 let selectedItem = null;
-
                 for (const item of availableItems) {
                     random -= item.weight;
                     if (random <= 0) {
@@ -2160,7 +2155,6 @@
                         break;
                     }
                 }
-
                 // 如果权重计算有问题，随机选择一个
                 if (!selectedItem) {
                     selectedItem = availableItems[Math.floor(Math.random() * availableItems.length)];
@@ -2176,7 +2170,6 @@
                     }
                 }
             }
-
             results[category.name] = selectedItems;
         }
 
@@ -2184,7 +2177,6 @@
             alert(errorMessage);
             return;
         }
-
         // 显示结果
         showResultsModal(results, plan);
     }
@@ -2193,7 +2185,6 @@
     function showResultsModal(results, plan) {
         currentResults = results;
         currentPlanForResults = plan;
-
         const resultContent = document.getElementById('result-content');
         resultContent.innerHTML = '';
 
